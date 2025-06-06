@@ -51,6 +51,8 @@ kamakura::kamakura(QWidget *parent)
     setupDocks();
     setupConnections();
 
+    setDarkTheme();
+
     on_actionNew_triggered(); // Start with a new, empty tab
     updateWindowTitle("");
 }
@@ -100,6 +102,11 @@ void kamakura::setupEditor(CodeEditor* editor)
     font.setFixedPitch(true);
     font.setPointSize(12);
     editor->setFont(font);
+
+    if (darkThemeEnabled)
+        editor->applyDarkTheme();
+    else
+        editor->applyLightTheme();
 
     connect(editor, &QPlainTextEdit::modificationChanged, this, &kamakura::updateTabDirtyStatus);
 }
@@ -385,7 +392,13 @@ void kamakura::on_actionHowTo_triggered()
 
 void kamakura::setLightTheme()
 {
+    darkThemeEnabled = false;
     qApp->setPalette(qApp->style()->standardPalette());
+    for (int i = 0; i < tabs->count(); ++i) {
+        if (auto editor = qobject_cast<CodeEditor*>(tabs->widget(i))) {
+            editor->applyLightTheme();
+        }
+    }
 }
 
 void kamakura::setDarkTheme()
@@ -404,5 +417,11 @@ void kamakura::setDarkTheme()
     darkPalette.setColor(QPalette::BrightText, Qt::red);
     darkPalette.setColor(QPalette::Highlight, QColor(142,45,197).lighter());
     darkPalette.setColor(QPalette::HighlightedText, Qt::black);
+    darkThemeEnabled = true;
     qApp->setPalette(darkPalette);
+    for (int i = 0; i < tabs->count(); ++i) {
+        if (auto editor = qobject_cast<CodeEditor*>(tabs->widget(i))) {
+            editor->applyDarkTheme();
+        }
+    }
 }
