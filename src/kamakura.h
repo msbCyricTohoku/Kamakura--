@@ -70,6 +70,8 @@ private:
     Highlighter* highlighter;
     FindDialog *findDialog;
     MetricReporter *metricReporter;
+
+    bool darkThemeEnabled{true};
     
     QDockWidget* opened_docs_dock;
     QListWidget* opened_docs_widget;

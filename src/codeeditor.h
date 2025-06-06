@@ -11,6 +11,7 @@
 #include <QTextFormat>
 #include <QTextCursor>
 #include <QMessageBox>
+#include <QColor>
 #include "finddialog.h"
 #include "documentmetrics.h"
 
@@ -21,6 +22,9 @@ class CodeEditor : public QPlainTextEdit {
 
 public:
     CodeEditor(QWidget *parent = nullptr);
+
+    void applyLightTheme();
+    void applyDarkTheme();
 
     inline DocumentMetrics getDocumentMetrics() const { return metrics; }
 
@@ -65,6 +69,9 @@ private:
     QWidget *lineNumberArea;
      DocumentMetrics metrics;
      QString getFileNameFromPath();
+     QColor lineHighlightColor;
+     QColor lineNumberAreaBgColor;
+     QColor lineNumberAreaTextColor;
 
 };
 
