@@ -351,7 +351,7 @@ void kamakura::on_actionKamakura_triggered()
         "<p><b>Kamakura Code Editor</b></p>"
         "<p>Version 1.1</p>"
         "<p>A lightweight, extensible code editor.</p>"
-        "<p>Original by Mehrdad S. Beni & Hiroshi Watabe, 2023.</p>");
+        "<p>By Mehrdad S. Beni & Hiroshi Watabe, 2025.</p>");
 }
 
 void kamakura::on_actionHowTo_triggered()
