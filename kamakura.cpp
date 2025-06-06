@@ -469,7 +469,7 @@ void kamakura::CloseFile() {
         CloseFile(tabs->currentIndex());
 }
 
-void::kamakura::UpdateParameter() {
+void kamakura::UpdateParameter() {
 
         QString file = tabs->tabBar()->tabText(tabs->currentIndex());
         QString file_extension = QFileInfo(file).suffix();

@@ -159,7 +159,10 @@ Highlighter::Highlighter(const QString _filename, QObject *parent) : QSyntaxHigh
 }
 
 void Highlighter::highlightBlock(const QString& text) {
-    auto &data = langs.value(current_extension);
+    // Retrieve the highlighting data for the current extension. `QHash::value`
+    // returns the value by copy, so storing it by reference would leave us with
+    // a dangling reference. Keep the value locally instead.
+    auto data = langs.value(current_extension);
 
 
     foreach (const HighlightFormat& rule_, data.for_keywords) {
