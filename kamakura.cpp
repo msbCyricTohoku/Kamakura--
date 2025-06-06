@@ -240,8 +240,9 @@ void kamakura::onCurrentTabChanged(int index)
 
     CodeEditor* editor = currentEditor();
     if (!editor) return;
-    
+
     QFileInfo fileInfo(tabs->tabToolTip(index));
+    highlighter->setDocument(editor->document());
     highlighter->setExtension(fileInfo.suffix());
     highlighter->rehighlight();
 
