@@ -29,11 +29,13 @@ void Highlighter::loadLanguage(const QString& path)
     }
     file.close();
 
-    QDomElement langElement = doc.documentElement().firstChildElement("language");
-    if (langElement.isNull()) return;
-
-    Language lang;
-    lang.extensionRegex = langElement.attribute("extentions");
+    QDomElement rootElem = doc.documentElement();
+    for(QDomElement langElement = rootElem.firstChildElement("language");
+        !langElement.isNull();
+        langElement = langElement.nextSiblingElement("language"))
+    {
+        Language lang;
+        lang.extensionRegex = langElement.attribute("extentions");
 
     // Define Text Formats
     QTextCharFormat keywordFormat;
@@ -120,23 +122,25 @@ void Highlighter::loadLanguage(const QString& path)
     cleanExts.remove('(').remove(')');
     QStringList exts = cleanExts.split('|');
     for(const QString& ext : exts) {
-        QString trimmedExt = ext.trimmed();
+        QString trimmedExt = ext.trimmed().toLower();
         if (!trimmedExt.isEmpty()) {
             languageByExtension.insert(trimmedExt, lang);
         }
+    }
     }
 }
 
 
 bool Highlighter::setExtension(const QString &fileExtension)
 {
-    currentLanguage = languageByExtension.contains(fileExtension) ? &languageByExtension[fileExtension] : nullptr;
+    QString key = fileExtension.toLower();
+    currentLanguage = languageByExtension.contains(key) ? &languageByExtension[key] : nullptr;
     return currentLanguage != nullptr;
 }
 
 QStringList Highlighter::getKeywordsForExtension(const QString& fileExtension)
 {
-    return languageByExtension.value(fileExtension).keywords;
+    return languageByExtension.value(fileExtension.toLower()).keywords;
 }
 
 // Helper function to apply a set of rules
