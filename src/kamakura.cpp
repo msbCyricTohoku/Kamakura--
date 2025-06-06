@@ -26,8 +26,9 @@ kamakura::kamakura(QWidget *parent)
     setAcceptDrops(true);
 
     // Load language files from the embedded Qt resources, using the correct prefix.
-    highlighter = new Highlighter({":/new/prefix1/resources/phits_commands.xml", 
-                                   ":/new/prefix1/resources/python_lang.xml"}, this);
+    highlighter = new Highlighter({":/new/prefix1/resources/phits_commands.xml",
+                                   ":/new/prefix1/resources/python_lang.xml",
+                                   ":/new/prefix1/resources/cpp_lang.xml"}, this);
 
     tabs = new QTabWidget(this);
     tabs->setMovable(true);
