@@ -158,9 +158,26 @@ void kamakura::on_actionSave_triggered()
     CodeEditor* editor = currentEditor();
     if (!editor) return;
 
+    QString filePath = QFileDialog::getSaveFileName(this, "Save File As", QDir::homePath());
+    if (filePath.isEmpty()) return;
+
+    tabs->setTabToolTip(tabs->currentIndex(), filePath);
+    on_actionSave_2_triggered();
+
+    QFileInfo fileInfo(filePath);
+    tabs->setTabText(tabs->currentIndex(), fileInfo.fileName());
+    opened_docs_widget->item(tabs->currentIndex())->setText(fileInfo.fileName());
+    onCurrentTabChanged(tabs->currentIndex());
+}
+
+void kamakura::on_actionSave_2_triggered()
+{
+    CodeEditor* editor = currentEditor();
+    if (!editor) return;
+
     QString filePath = tabs->tabToolTip(tabs->currentIndex());
     if (filePath.isEmpty()) {
-        on_actionSave_2_triggered(); // This is "Save As"
+        on_actionSave_triggered();
         return;
     }
 
@@ -174,23 +191,6 @@ void kamakura::on_actionSave_triggered()
     file.close();
     editor->document()->setModified(false);
     ui->statusbar->showMessage("File saved", 2000);
-}
-
-void kamakura::on_actionSave_2_triggered()
-{
-    CodeEditor* editor = currentEditor();
-    if (!editor) return;
-
-    QString filePath = QFileDialog::getSaveFileName(this, "Save File As", QDir::homePath());
-    if (filePath.isEmpty()) return;
-    
-    tabs->setTabToolTip(tabs->currentIndex(), filePath);
-    on_actionSave_triggered();
-
-    QFileInfo fileInfo(filePath);
-    tabs->setTabText(tabs->currentIndex(), fileInfo.fileName());
-    opened_docs_widget->item(tabs->currentIndex())->setText(fileInfo.fileName());
-    onCurrentTabChanged(tabs->currentIndex());
 }
 
 
