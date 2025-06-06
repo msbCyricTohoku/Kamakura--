@@ -18,5 +18,6 @@
         <file>resources/icon.ico</file>
         <file>resources/phits_commands.xml</file>
         <file>resources/python_lang.xml</file>
+        <file>resources/cpp_lang.xml</file>
     </qresource>
 </RCC>
