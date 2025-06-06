@@ -84,9 +84,14 @@ Highlighter::Highlighter(const QString _filename, QObject *parent) : QSyntaxHigh
             }
             keywords.clear();
 
+            // Gather any material parameters. The previous implementation
+            // accidentally iterated using the size of the "extraparam" list
+            // which could lead to invalid access when the number of
+            // "matparam" elements differed.  Use the correct size of the
+            // list here.
             QDomNodeList list4 = ext.elementsByTagName("matparam");
             int size4 = list4.size();
-            for (int i = 0; i < size3; ++i){
+            for (int i = 0; i < size4; ++i){
                 keywords.append(list4.at(i).toElement().text());
             }
 
@@ -159,6 +164,14 @@ Highlighter::Highlighter(const QString _filename, QObject *parent) : QSyntaxHigh
 }
 
 void Highlighter::highlightBlock(const QString& text) {
+    // Ensure there is highlighting information for the current extension.
+    // When an unsupported extension is encountered the previous implementation
+    // would still attempt to access the default constructed value which could
+    // lead to unexpected behaviour.  Bail out early in that situation.
+    if (!langs.contains(current_extension)) {
+        return;
+    }
+
     // Retrieve the highlighting data for the current extension. `QHash::value`
     // returns the value by copy, so storing it by reference would leave us with
     // a dangling reference. Keep the value locally instead.
