@@ -59,6 +59,7 @@ public slots:
     bool find(QString query, bool caseSensitive, bool wholeWords);
     void replace(QString what, QString with, bool caseSensitive, bool wholeWords);
     void replaceAll(QString what, QString with, bool caseSensitive, bool wholeWords);
+    void updateMetrics();
 
 private:
     QWidget *lineNumberArea;

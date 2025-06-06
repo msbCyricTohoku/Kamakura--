@@ -20,6 +20,7 @@ public slots:
     void updateCharCount(int charCount);
     void updateLineCount(int current, int total);
     void updateColumnCount(int columnCount);
+    void clearMetrics();
 
 private:
     QLabel *wordLabel;
