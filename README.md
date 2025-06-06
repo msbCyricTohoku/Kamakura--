@@ -17,6 +17,7 @@ make
 - Syntax highlighting for PHITS and Python
 - Search and replace dialog
 - Live document metrics in the status bar
+- Save and Save As functions
 
 After compilation, run the generated binary and open your `.i` or `.inp` scripts.
 
