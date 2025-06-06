@@ -228,7 +228,7 @@ void kamakura::OpenFile(const QString& filepath) {
         QString file_extension = QFileInfo(filename).suffix();
         if (highlighter->setExtension(file_extension)) {
             highlighter->setDocument(new_text_edit->document());
-            highlighter->highlightBlock(new_text_edit->toPlainText());
+            highlighter->rehighlight();
         }
 
         tabs->setTabWhatsThis(index, "No changes");
@@ -269,7 +269,7 @@ void kamakura::on_actionSave_triggered()
             QString file_extension = QFileInfo(filename).suffix();
             if (highlighter->setExtension(file_extension)) {
             highlighter->setDocument(((CodeEditor*)tabs->currentWidget())->document());
-            highlighter->highlightBlock(((CodeEditor*)tabs->currentWidget())->toPlainText());
+            highlighter->rehighlight();
             }
 
             tabs->setTabWhatsThis(tabs->currentIndex(), "No changes");
@@ -438,8 +438,8 @@ void kamakura::UpdateCurrentIndex(int new_selection_index) {
         if (!file_extension.isEmpty()) {
             // reconnectsignals();
             if (highlighter->setExtension(file_extension)) {
-            highlighter->setDocument(((CodeEditor*)tabs->currentWidget())->document()); // unsafe getting!
-            highlighter->highlightBlock(((CodeEditor*)tabs->currentWidget())->toPlainText()); // unsafe getting!
+            highlighter->setDocument(((CodeEditor*)tabs->currentWidget())->document());
+            highlighter->rehighlight();
             }
         }
 
