@@ -1,220 +1,182 @@
 #include "highlighter.h"
-
+#include <QFile>
+#include <QFileInfo>
 #include <QDebug>
+
 //Kamakura-- Mehrdad S. Beni and Hiroshi Watabe, Japan 2023
-Highlighter::Highlighter(const QString _filename, QObject *parent) : QSyntaxHighlighter(parent) {
-    xml_filename=_filename;
-    QFile file(xml_filename);
-    QStringList keywords;
-    QStringList params;
-   // QStringList extraparams;
-  //  QStringList matparams;
-    if (file.open(QIODevice::ReadOnly)) {
-        HighlightFormat my_format;
-        HighlightFormat my_format2;
-        QDomDocument doc;
-        doc.setContent(&file);
-        auto languages = doc.elementsByTagName("language");
-        for (int i = 0; i < languages.length(); ++i) {
-            auto ext = languages.at(i).toElement();
 
-            auto file_extension = QRegExp(ext.attribute("extentions"));
+Highlighter::Highlighter(const QStringList& languageFiles, QObject *parent)
+    : QSyntaxHighlighter(parent)
+{
+    for (const QString& file : languageFiles) {
+        loadLanguage(file);
+    }
+}
 
-            HighlightLang data = {};
+void Highlighter::loadLanguage(const QString& path)
+{
+    QFile file(path);
+    if (!file.open(QIODevice::ReadOnly)) {
+        qWarning() << "Highlighter Error: Could not open language file:" << path;
+        return;
+    }
 
-            QDomNodeList list = ext.elementsByTagName("keyword");
-            int size = list.size();
-            for (int i = 0; i < size; ++i){
-                keywords.append(list.at(i).toElement().text());
-            }
+    QDomDocument doc;
+    if (!doc.setContent(&file)) {
+        qWarning() << "Could not parse XML from file:" << path;
+        file.close();
+        return;
+    }
+    file.close();
 
-            data.keyword_format.setForeground(Qt::darkBlue);
-            data.keyword_format.setFontWeight(QFont::Bold);
-            foreach (const QString& _pattern, keywords) {
+    QDomElement langElement = doc.documentElement().firstChildElement("language");
+    if (langElement.isNull()) return;
 
-                my_format.pattern = QRegExp("\\b"+_pattern+"\\b");
-                my_format.format = data.keyword_format;
-                data.for_keywords.append(my_format);
-            }
-            keywords.clear();
-            list = ext.elementsByTagName("command");
-            size = list.size();
-            data.preproc_format.setForeground(Qt::darkBlue);
-            for (int i = 0; i < size; ++i)
-                keywords.append(list.at(i).toElement().text());
+    Language lang;
+    lang.extensionRegex = langElement.attribute("extentions");
 
-            foreach(const QString& _pattern, keywords){
-                my_format.pattern = QRegExp(_pattern);
-                my_format.format = data.preproc_format;
-                data.for_keywords.append(my_format);
-            }
-//***********************************************************************
+    // Define Text Formats
+    QTextCharFormat keywordFormat;
+    keywordFormat.setForeground(Qt::darkBlue);
+    keywordFormat.setFontWeight(QFont::Bold);
 
-            QDomNodeList list2 = ext.elementsByTagName("param");
-            int size2 = list2.size();
-            for (int i = 0; i < size2; ++i){
-                keywords.append(list2.at(i).toElement().text());
-            }
+    QTextCharFormat paramFormat;
+    paramFormat.setForeground(QColor("#008080"));
+    paramFormat.setFontWeight(QFont::DemiBold);
 
-            data.keyword_format.setForeground(Qt::blue);
-            data.keyword_format.setFontWeight(QFont::DemiBold);
-            foreach (const QString& _pattern, keywords) {
+    QTextCharFormat extraParamFormat;
+    extraParamFormat.setForeground(Qt::darkMagenta);
 
-                my_format.pattern = QRegExp("\\b"+_pattern+"\\b");
-                my_format.format = data.keyword_format;
-                data.for_keywords.append(my_format);
-            }
-            keywords.clear();
+    QTextCharFormat matParamFormat;
+    matParamFormat.setForeground(QColor("#228B22"));
 
-//***********************************************************************
+    QTextCharFormat quotationFormat;
+    quotationFormat.setForeground(Qt::darkGreen);
 
-            QDomNodeList list3 = ext.elementsByTagName("extraparam");
-            int size3 = list3.size();
-            for (int i = 0; i < size3; ++i){
-                keywords.append(list3.at(i).toElement().text());
-            }
+    QTextCharFormat singleLineCommentFormat;
+    singleLineCommentFormat.setForeground(QColor(Qt::green).darker(150));
+    
+    QTextCharFormat functionFormat;
+    functionFormat.setFontItalic(true);
+    functionFormat.setForeground(QColor("#9B227B"));
 
-            data.keyword_format.setForeground(Qt::red);
-            data.keyword_format.setFontWeight(QFont::ExtraExpanded);
-            foreach (const QString& _pattern, keywords) {
+    // Function Rule
+    HighlightingRule funcRule;
+    funcRule.pattern = QRegularExpression("\\b[A-Za-z0-9_]+(?=\\()");
+    funcRule.format = functionFormat;
+    lang.functionRules.append(funcRule);
 
-                my_format.pattern = QRegExp("\\b"+_pattern+"\\b");
-                my_format.format = data.keyword_format;
-                data.for_keywords.append(my_format);
-            }
-            keywords.clear();
+    // Keyword Rules
+    QDomElement keywordsElement = langElement.firstChildElement("keywords");
+    for (QDomElement elem = keywordsElement.firstChildElement(); !elem.isNull(); elem = elem.nextSiblingElement()) {
+        QString tagName = elem.tagName();
+        QString text = elem.text();
+        lang.keywords.append(text);
 
-            // Gather any material parameters. The previous implementation
-            // accidentally iterated using the size of the "extraparam" list
-            // which could lead to invalid access when the number of
-            // "matparam" elements differed.  Use the correct size of the
-            // list here.
-            QDomNodeList list4 = ext.elementsByTagName("matparam");
-            int size4 = list4.size();
-            for (int i = 0; i < size4; ++i){
-                keywords.append(list4.at(i).toElement().text());
-            }
+        HighlightingRule rule;
+        rule.pattern = QRegularExpression(tagName == "extraparam" ? text : "\\b" + text + "\\b");
 
-            data.keyword_format.setForeground(Qt::green);
-            data.keyword_format.setFontWeight(QFont::Bold);
-            foreach (const QString& _pattern, keywords) {
+        if (tagName == "keyword") rule.format = keywordFormat;
+        else if (tagName == "param") rule.format = paramFormat;
+        else if (tagName == "extraparam") rule.format = extraParamFormat;
+        else if (tagName == "matparam") rule.format = matParamFormat;
+        else continue;
 
-                my_format.pattern = QRegExp("\\b"+_pattern+"\\b");
-                my_format.format = data.keyword_format;
-                data.for_keywords.append(my_format);
-            }
-            keywords.clear();
+        lang.keywordRules.append(rule);
+    }
+    
+    // Single-Line Comment Rules
+    QDomElement singleComment = langElement.firstChildElement("single_comment");
+    if (!singleComment.isNull()) {
+        HighlightingRule r;
+        r.pattern = QRegularExpression(singleComment.attribute("expression"));
+        r.format = singleLineCommentFormat;
+        lang.singleLineCommentRules.append(r);
+    }
+    QDomElement singleComment2 = langElement.firstChildElement("single_comment2");
+    if (!singleComment2.isNull()) {
+        HighlightingRule r;
+        r.pattern = QRegularExpression(singleComment2.attribute("expression2"));
+        r.format = singleLineCommentFormat;
+        lang.singleLineCommentRules.append(r);
+    }
 
-/*
-            QDomNodeList list3 = ext.elementsByTagName("extraparam");
-            int size3 = list3.size();
-            for (int i = 0; i < size3; ++i){
-                extraparams.append(list3.at(i).toElement().text());
-            }
+    // Quotation Rule (non-greedy)
+    HighlightingRule quoteRule;
+    quoteRule.pattern = QRegularExpression("\".*?\"");
+    quoteRule.format = quotationFormat;
+    lang.quotationRules.append(quoteRule);
 
-            QDomNodeList list4 = ext.elementsByTagName("matparam");
-            int size4 = list4.size();
-            for (int i = 0; i < size4; ++i){
-                matparams.append(list4.at(i).toElement().text());
-            }
+    // Multi-line Comment Rules
+    QDomElement multiComment = langElement.firstChildElement("multiline_comment");
+    if (!multiComment.isNull()) {
+        lang.multiLineCommentStart = QRegularExpression(multiComment.attribute("begin"));
+        lang.multiLineCommentEnd = QRegularExpression(multiComment.attribute("end"));
+        lang.multiLineCommentFormat.setForeground(QColor(Qt::green).darker(150));
+    }
 
-*/
-
-
-            data.classname_format.setForeground(Qt::darkMagenta);
-            data.classname_format.setFontWeight(QFont::Bold);
-            my_format.pattern = QRegExp("\\bQ[A-Za-z]+\\b");
-            my_format.format = data.classname_format;
-            data.for_keywords.append(my_format);
-            data.multi_comment.setForeground(Qt::green);
-            QDomNode beg_com = ext.elementsByTagName("multiline_comment").at(0);
-            data.comment_beg_exp=QRegExp(beg_com.toElement().attribute("begin"));
-            data.comment_end_exp=QRegExp(beg_com.toElement().attribute("end"));
-
-            data.single_comment2.setForeground(QColor(Qt::green).lighter(50));
-            QDomNode single_com2 = ext.elementsByTagName("single_comment2").at(0);
-            my_format.pattern = QRegExp(single_com2.toElement().attribute("expression2"));
-            my_format.format = data.single_comment2;
-            data.for_keywords.append(my_format);
-
-            data.single_comment.setForeground(QColor(Qt::green).lighter(50));
-            QDomNode single_com = ext.elementsByTagName("single_comment").at(0);
-            my_format.pattern = QRegExp(single_com.toElement().attribute("expression"));
-            my_format.format = data.single_comment;
-            data.for_keywords.append(my_format);
+    // Store the processed language definition
+    QString cleanExts = lang.extensionRegex;
+    cleanExts.remove('(').remove(')');
+    QStringList exts = cleanExts.split('|');
+    for(const QString& ext : exts) {
+        QString trimmedExt = ext.trimmed();
+        if (!trimmedExt.isEmpty()) {
+            languageByExtension.insert(trimmedExt, lang);
+        }
+    }
+}
 
 
-            data.quotation_format.setForeground(Qt::green);
-            my_format.pattern = QRegExp("\".*\"");
-            my_format.format = data.quotation_format;
-            data.for_keywords.append(my_format);
+bool Highlighter::setExtension(const QString &fileExtension)
+{
+    currentLanguage = languageByExtension.contains(fileExtension) ? &languageByExtension[fileExtension] : nullptr;
+    return currentLanguage != nullptr;
+}
 
-            data.function_format.setFontItalic(false);
-            data.function_format.setForeground(Qt::magenta);
-          //  my_format.pattern = QRegExp("[A-Za-z0-9_]+[?=\\()");
-            my_format.pattern = QRegExp("=");
-            my_format.format = data.function_format;
-            data.for_keywords.append(my_format);
+QStringList Highlighter::getKeywordsForExtension(const QString& fileExtension)
+{
+    return languageByExtension.value(fileExtension).keywords;
+}
 
-            langs.insert(file_extension, data);
-
-
+// Helper function to apply a set of rules
+void Highlighter::applyRules(const QString& text, const QVector<HighlightingRule>& rules)
+{
+    for (const HighlightingRule &rule : rules) {
+        QRegularExpressionMatchIterator i = rule.pattern.globalMatch(text);
+        while (i.hasNext()) {
+            QRegularExpressionMatch match = i.next();
+            setFormat(match.capturedStart(), match.capturedLength(), rule.format);
         }
     }
 }
 
 void Highlighter::highlightBlock(const QString& text) {
-    // Ensure there is highlighting information for the current extension.
-    // When an unsupported extension is encountered the previous implementation
-    // would still attempt to access the default constructed value which could
-    // lead to unexpected behaviour.  Bail out early in that situation.
-    if (!langs.contains(current_extension)) {
+    if (!currentLanguage) {
         return;
     }
 
-    // Retrieve the highlighting data for the current extension. `QHash::value`
-    // returns the value by copy, so storing it by reference would leave us with
-    // a dangling reference. Keep the value locally instead.
-    auto data = langs.value(current_extension);
+    // Apply rules in a specific order of precedence
+    applyRules(text, currentLanguage->functionRules);
+    applyRules(text, currentLanguage->keywordRules);
+    applyRules(text, currentLanguage->quotationRules);
+    applyRules(text, currentLanguage->singleLineCommentRules);
 
-
-    foreach (const HighlightFormat& rule_, data.for_keywords) {
-        QRegExp expression(rule_.pattern);
-        int index = expression.indexIn(text);
-        while (index >= 0) {
-            int len = expression.matchedLength();
-            setFormat(index, len, rule_.format);
-            index = expression.indexIn(text, index+len);
-        }
-    }
+    // Handle multi-line comments last
     setCurrentBlockState(0);
-    int begin = 0;
-    if (previousBlockState() != 1)
-        begin = data.comment_beg_exp.indexIn(text);
+    int startIndex = (previousBlockState() != 1) ? currentLanguage->multiLineCommentStart.match(text).capturedStart() : 0;
 
-    while (begin >= 1) {
-        int end = data.comment_end_exp.indexIn(text);
-        int com_len;
-        if (end == -1) {
+    while (startIndex >= 0) {
+        QRegularExpressionMatch endMatch = currentLanguage->multiLineCommentEnd.match(text, startIndex);
+        int endIndex = endMatch.capturedStart();
+        int commentLength;
+        if (endIndex == -1) {
             setCurrentBlockState(1);
-            com_len = text.length() - begin + data.comment_end_exp.matchedLength();
+            commentLength = text.length() - startIndex;
+        } else {
+            commentLength = endIndex - startIndex + endMatch.capturedLength();
         }
-        else {
-            com_len = end - begin + data.comment_end_exp.matchedLength();
-        }
-        setFormat(begin, com_len, data.multi_comment);
-        begin = data.comment_beg_exp.indexIn(text, begin + com_len);
+        setFormat(startIndex, commentLength, currentLanguage->multiLineCommentFormat);
+        startIndex = currentLanguage->multiLineCommentStart.match(text, startIndex + commentLength).capturedStart();
     }
 }
-
-bool Highlighter::setExtension(const QString &_filename) {
-    for (int i = 0; i < langs.size(); ++i) {
-        if (langs.keys().at(i).indexIn(_filename) != -1){
-            current_extension = langs.keys().at(i);
-            return true;
-        }
-    }
-
-    return false;
-}
-//Kamakura-- Mehrdad S. Beni and Hiroshi Watabe, Japan 2023

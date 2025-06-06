@@ -2,56 +2,26 @@
 #define KAMAKURA_H
 
 #include <QMainWindow>
-#include <QGridLayout>
-#include <QWidget>
-#include <QTabWidget>
-//#include <QSyntaxHighlighter>
-#include <QString>
-#include <QMenu>
-#include <QMessageBox>
-#include <QErrorMessage>
-#include <QFile>
-#include <QTextStream>
-#include <QFileDialog>
-#include <QFileInfo>
-//#include <QPrinter>
-#include <QDockWidget>
-#include <QListWidget>
-#include <QListWidgetItem>
-#include <QTreeView>
-#include <QDirModel>
-#include <QModelIndex>
-#include <QToolBar>
-#include <QTabBar>
-#include <QAction>
-#include <QToolButton>
-#include <QCloseEvent>
-#include <QDragEnterEvent>
-#include <QDropEvent>
-#include <QMimeData>
 #include <QList>
-#include <QUrl>
-#include <QFont>
-#include <QTextFormat>
-#include <QTextCursor>
-#include <QIODevice>
-#include <QCloseEvent>                  // closeEvent
-#include <QLabel>                       // GUI labels
-#include <QActionGroup>
-#include <QStandardPaths>               // see default directory
-#include <QTabWidget>
-#include "linenumberarea.h"
-#include "codeeditor.h"
-#include "highlighter.h"
-#include "finddialog.h"
-#include "metrics.h"
-#include "documentmetrics.h"
 
-//Kamakura-- Mehrdad S. Beni and Hiroshi Watabe, Japan 2023
-
+// Forward Declarations
 QT_BEGIN_NAMESPACE
 namespace Ui { class kamakura; }
 QT_END_NAMESPACE
+class QTabWidget;
+class Highlighter;
+class CodeEditor;
+class QDockWidget;
+class QListWidget;
+class FindDialog;
+class MetricReporter;
+class QListWidgetItem;
+class QModelIndex;
+class QDragEnterEvent;
+class QDropEvent;
+
+
+//Kamakura-- Mehrdad S. Beni and Hiroshi Watabe, Japan 2023
 
 class kamakura : public QMainWindow
 {
@@ -61,89 +31,50 @@ public:
    explicit kamakura(QWidget *parent = nullptr);
     ~kamakura();
 
+protected:
+    void dragEnterEvent(QDragEnterEvent* drag_event) override;
+    void dropEvent(QDropEvent* drop_event) override;
+
+private slots:
+    // Slots named to match the .ui file for auto-connection
+    void on_actionNew_triggered();
+    void on_actionOpen_triggered();
+    void on_actionSave_triggered();
+    void on_actionSave_2_triggered();
+    void on_actionQuit_triggered();
+    void on_actionCut_triggered();
+    void on_actionCopy_triggered();
+    void on_actionPaste_triggered();
+    void on_actionZoom_triggered();
+    void on_actionZoom_2_triggered();
+    void on_actionSearch_and_Replace_triggered();
+    void on_actionKamakura_triggered();
+    void on_actionHowTo_triggered();
+
+    // Internal Logic Slots
+    void openFileByPath(const QString& path);
+    void closeTab(int index);
+    void updateTabDirtyStatus();
+    void onCurrentTabChanged(int index);
+    void syncListSelectionWithTab(int index);
+    void syncTabSelectionWithList(QListWidgetItem* item);
+    void handleTabMoved(int from, int to);
+
+
 private:
     Ui::kamakura *ui;
     QTabWidget* tabs;
     Highlighter* highlighter;
-    CodeEditor *editor = nullptr;
-    QDirModel* file_system_model;
-    QTreeView* file_system_view;
-    // QListWidget* opened_docs_widget;
-    QDockWidget* opened_docs_dock;
     FindDialog *findDialog;
-    QListWidget* opened_docs_widget;
     MetricReporter *metricReporter;
-    const QString WINDOW_STATUS_BAR = "window_status_bar";
+    
+    QDockWidget* opened_docs_dock;
+    QListWidget* opened_docs_widget;
 
-    void SetupTabWidget();
-     void SetupOpenedDocsDock();
-
-    void reconnectsignals();
-     void disconnectsignals();
-
-private slots:
-    void UpdateParameter();
-
-
-
-    void on_actionQuit_triggered();
-
-    void on_actionKamakura_triggered();
-
-
-    void OpenFile(const QString&);
-
-    void on_actionOpen_triggered();
-
-    void on_actionSave_triggered();
-
-
-    void on_actionZoom_triggered();
-
-    void on_actionZoom_2_triggered();
-
-    void on_actionSave_2_triggered();
-
-    void on_actionNew_triggered();
-
-    void on_actionCut_triggered();
-
-    void on_actionPaste_triggered();
-
-    void on_actionCopy_triggered();
-
-    void dragEnterEvent(QDragEnterEvent* drag_event);
-
-    void dropEvent(QDropEvent* drop_event);
-
-    void OpenFile(QModelIndex);
-
-    void on_actionSearch_and_Replace_triggered();
-
-
-    void CloseFile();
-    void CloseFile(int);
-
-  void ChangeTabIndexInList(int, int);
-    void UpdateCurrentIndex(QListWidgetItem*);
-    void UpdateCurrentIndexOnDelete(int);
-    void DeleteTabFromList(int);
-    void UpdateCurrentIndex(int);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    void on_actionHowTo_triggered();
+    void setupEditor(CodeEditor* editor);
+    void setupDocks();
+    void setupConnections();
+    void updateWindowTitle(const QString& currentFile);
+    CodeEditor* currentEditor();
 };
 #endif // KAMAKURA_H
-//Kamakura-- Mehrdad S. Beni and Hiroshi Watabe, Japan 2023

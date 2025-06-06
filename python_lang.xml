@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<languages>
+    <!-- Python Language Definition -->
+    <language extentions="(py|pyw)">
+        <!-- Comments -->
+        <single_comment expression="#[^\n]*"></single_comment>
+        <multiline_comment begin="&quot;&quot;&quot;" end="&quot;&quot;&quot;"></multiline_comment>
+        
+        <keywords>
+            <!-- Standard Keywords (Blue, Bold) -->
+            <keyword>False</keyword>
+            <keyword>None</keyword>
+            <keyword>True</keyword>
+            <keyword>and</keyword>
+            <keyword>as</keyword>
+            <keyword>assert</keyword>
+            <keyword>async</keyword>
+            <keyword>await</keyword>
+            <keyword>break</keyword>
+            <keyword>class</keyword>
+            <keyword>continue</keyword>
+            <keyword>def</keyword>
+            <keyword>del</keyword>
+            <keyword>elif</keyword>
+            <keyword>else</keyword>
+            <keyword>except</keyword>
+            <keyword>finally</keyword>
+            <keyword>for</keyword>
+            <keyword>from</keyword>
+            <keyword>global</keyword>
+            <keyword>if</keyword>
+            <keyword>import</keyword>
+            <keyword>in</keyword>
+            <keyword>is</keyword>
+            <keyword>lambda</keyword>
+            <keyword>nonlocal</keyword>
+            <keyword>not</keyword>
+            <keyword>or</keyword>
+            <keyword>pass</keyword>
+            <keyword>raise</keyword>
+            <keyword>return</keyword>
+            <keyword>try</keyword>
+            <keyword>while</keyword>
+            <keyword>with</keyword>
+            <keyword>yield</keyword>
+
+            <!-- Built-in Functions & Types (Dark Cyan) -->
+            <param>print</param>
+            <param>len</param>
+            <param>str</param>
+            <param>int</param>
+            <param>float</param>
+            <param>list</param>
+            <param>dict</param>
+            <param>tuple</param>
+            <param>set</param>
+            <param>range</param>
+            <param>type</param>
+            <param>open</param>
+            <param>super</param>
+            <param>self</param>
+            <param>__init__</param>
+
+            <!-- Decorators (Purple/Magenta) -->
+            <extraparam>@\w+</extraparam>
+        </keywords>
+    </language>
+</languages>
+

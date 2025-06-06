@@ -16,5 +16,7 @@
         <file>resources/new.png</file>
         <file>resources/open.png</file>
         <file>resources/icon.ico</file>
+        <file>resources/phits_commands.xml</file>
+        <file>resources/python_lang.xml</file>
     </qresource>
 </RCC>
