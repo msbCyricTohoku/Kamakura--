@@ -209,6 +209,10 @@ void kamakura::OpenFile(const QString& filepath) {
         tabs->setTabToolTip(index, filepath);
         tabs->setTabWhatsThis(index, "No changes");
         connect(new_text_edit, SIGNAL(textChanged()), this, SLOT(UpdateParameter()));
+        connect(new_text_edit, SIGNAL(wordCountChanged(int)), metricReporter, SLOT(updateWordCount(int)));
+        connect(new_text_edit, SIGNAL(charCountChanged(int)), metricReporter, SLOT(updateCharCount(int)));
+        connect(new_text_edit, SIGNAL(lineChanged(int,int)), metricReporter, SLOT(updateLineCount(int,int)));
+        connect(new_text_edit, SIGNAL(columnChanged(int)), metricReporter, SLOT(updateColumnCount(int)));
 
         UpdateCurrentIndex(index);
 
@@ -336,6 +340,10 @@ void kamakura::on_actionNew_triggered()
        tabs->setTabToolTip(index, "");
        tabs->setTabWhatsThis(index, "No changes");
        connect(new_text_edit, SIGNAL(textChanged()), this, SLOT(UpdateParameter()));
+       connect(new_text_edit, SIGNAL(wordCountChanged(int)), metricReporter, SLOT(updateWordCount(int)));
+       connect(new_text_edit, SIGNAL(charCountChanged(int)), metricReporter, SLOT(updateCharCount(int)));
+       connect(new_text_edit, SIGNAL(lineChanged(int,int)), metricReporter, SLOT(updateLineCount(int,int)));
+       connect(new_text_edit, SIGNAL(columnChanged(int)), metricReporter, SLOT(updateColumnCount(int)));
 
 
        QListWidgetItem* new_item = new QListWidgetItem;
@@ -416,6 +424,13 @@ void kamakura::UpdateCurrentIndex(QListWidgetItem* current_item) {
 
 void kamakura::UpdateCurrentIndex(int new_selection_index) {
         opened_docs_widget->setCurrentRow(new_selection_index);
+
+        CodeEditor* current = static_cast<CodeEditor*>(tabs->widget(new_selection_index));
+        DocumentMetrics m = current->getDocumentMetrics();
+        metricReporter->updateWordCount(m.wordCount);
+        metricReporter->updateCharCount(m.charCount);
+        metricReporter->updateLineCount(m.currentLine, m.totalLines);
+        metricReporter->updateColumnCount(m.currentColumn);
 
         // + highlight update
         QString file = tabs->tabBar()->tabText(new_selection_index);

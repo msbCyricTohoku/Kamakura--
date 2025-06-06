@@ -520,5 +520,45 @@
             <matparam>No</matparam>
             <matparam>Lr</matparam>	
         </keywords>
-	</language>
+        </language>
+        <language extentions="(py)">
+                <single_comment expression = "#[^\n]*"></single_comment>
+                <single_comment2 expression2 = ""></single_comment2>
+                <multiline_comment begin = "'''" end = "'''"></multiline_comment>
+                <keywords>
+                        <keyword>def</keyword>
+                        <keyword>class</keyword>
+                        <keyword>import</keyword>
+                        <keyword>from</keyword>
+                        <keyword>return</keyword>
+                        <keyword>if</keyword>
+                        <keyword>else</keyword>
+                        <keyword>elif</keyword>
+                        <keyword>for</keyword>
+                        <keyword>while</keyword>
+                        <keyword>in</keyword>
+                        <keyword>try</keyword>
+                        <keyword>except</keyword>
+                </keywords>
+        </language>
+        <language extentions="(cpp|c|h|hpp|cc)">
+                <single_comment expression = "//[^\n]*"></single_comment>
+                <single_comment2 expression2 = ""></single_comment2>
+                <multiline_comment begin = "/*" end = "*/"></multiline_comment>
+                <keywords>
+                        <keyword>int</keyword>
+                        <keyword>float</keyword>
+                        <keyword>double</keyword>
+                        <keyword>class</keyword>
+                        <keyword>struct</keyword>
+                        <keyword>return</keyword>
+                        <keyword>if</keyword>
+                        <keyword>else</keyword>
+                        <keyword>for</keyword>
+                        <keyword>while</keyword>
+                        <keyword>#include</keyword>
+                        <keyword>using</keyword>
+                        <keyword>namespace</keyword>
+                </keywords>
+        </language>
 </languages>

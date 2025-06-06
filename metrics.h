@@ -4,6 +4,7 @@
 #include <QLabel>
 #include <QGroupBox>
 #include <QHBoxLayout>
+#include <QFrame>
 
 //Kamakura-- Mehrdad S. Beni and Hiroshi Watabe, Japan 2023
 

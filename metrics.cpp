@@ -13,37 +13,38 @@ MetricReporter::MetricReporter(QWidget *parent) : QFrame(parent)
     columnCountLabel = new QLabel();
 
     QHBoxLayout *layout = new QHBoxLayout();
-//    layout->addWidget(wordLabel);
- //   layout->addWidget(wordCountLabel);
- //   layout->addWidget(charLabel);
- ////   layout->addWidget(charCountLabel);
- //   layout->addWidget(lineLabel);
- //   layout->addWidget(lineCountLabel);
-//    layout->addWidget(columnLabel);
-//    layout->addWidget(columnCountLabel);
+    layout->setContentsMargins(5, 0, 5, 0);
+    layout->addWidget(wordLabel);
+    layout->addWidget(wordCountLabel);
+    layout->addWidget(charLabel);
+    layout->addWidget(charCountLabel);
+    layout->addWidget(lineLabel);
+    layout->addWidget(lineCountLabel);
+    layout->addWidget(columnLabel);
+    layout->addWidget(columnCountLabel);
     setLayout(layout);
 }
 
 
 void MetricReporter::updateWordCount(int wordCount)
 {
-//    wordCountLabel->setText(QString::number(wordCount));
+    wordCountLabel->setText(QString::number(wordCount));
 }
 
 
 void MetricReporter::updateCharCount(int charCount)
 {
- //   charCountLabel->setText(QString::number(charCount));
+    charCountLabel->setText(QString::number(charCount));
 }
 
 void MetricReporter::updateLineCount(int current, int total)
 {
-//    lineCountLabel->setText(QString::number(current) + tr("/") + QString::number(total));
+    lineCountLabel->setText(QString::number(current) + tr("/") + QString::number(total));
 }
 
 
 void MetricReporter::updateColumnCount(int columnCount)
 {
- //   columnCountLabel->setText(QString::number(columnCount));
+    columnCountLabel->setText(QString::number(columnCount));
 }
 //Kamakura-- Mehrdad S. Beni and Hiroshi Watabe, Japan 2023

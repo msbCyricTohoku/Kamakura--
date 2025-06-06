@@ -9,6 +9,7 @@
 #include <QStack>
 #include <QFileInfo>
 #include <QtDebug>
+#include <QRegularExpression>
 
 //Kamakura-- Mehrdad S. Beni and Hiroshi Watabe, Japan 2023
 
@@ -19,9 +20,13 @@ CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
     connect(this, &CodeEditor::blockCountChanged, this, &CodeEditor::updateLineNumberAreaWidth);
     connect(this, &CodeEditor::updateRequest, this, &CodeEditor::updateLineNumberArea);
     connect(this, &CodeEditor::cursorPositionChanged, this, &CodeEditor::highlightCurrentLine);
+    connect(this, &QPlainTextEdit::textChanged, this, &CodeEditor::handleTextChanged);
+    connect(this, &QPlainTextEdit::cursorPositionChanged, this, &CodeEditor::handleCursorPositionChanged);
 
     updateLineNumberAreaWidth(0);
     highlightCurrentLine();
+    handleTextChanged();
+    handleCursorPositionChanged();
 }
 
 int CodeEditor::lineNumberAreaWidth()
@@ -201,5 +206,26 @@ QTextDocument::FindFlags CodeEditor::getSearchOptionsFromFlags(bool caseSensitiv
         searchOptions |= QTextDocument::FindWholeWords;
     }
     return searchOptions;
+}
+
+void CodeEditor::handleTextChanged()
+{
+    QString text = toPlainText();
+    metrics.wordCount = text.split(QRegularExpression("\\b\\w+\\b"), Qt::SkipEmptyParts).size();
+    metrics.charCount = text.length();
+    metrics.totalLines = blockCount();
+    emit wordCountChanged(metrics.wordCount);
+    emit charCountChanged(metrics.charCount);
+    emit lineChanged(metrics.currentLine, metrics.totalLines);
+}
+
+void CodeEditor::handleCursorPositionChanged()
+{
+    QTextCursor c = textCursor();
+    metrics.currentLine = c.blockNumber() + 1;
+    metrics.currentColumn = c.position() - c.block().position() + 1;
+    metrics.totalLines = blockCount();
+    emit lineChanged(metrics.currentLine, metrics.totalLines);
+    emit columnChanged(metrics.currentColumn);
 }
 //Kamakura-- Mehrdad S. Beni and Hiroshi Watabe, Japan 2023
