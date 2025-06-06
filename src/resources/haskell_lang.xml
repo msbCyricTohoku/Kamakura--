@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<languages>
+    <language extentions="(hs)">
+        <single_comment expression="--[^\n]*"></single_comment>
+        <multiline_comment begin="\{-" end="-\}"></multiline_comment>
+        <keywords>
+            <keyword>module</keyword>
+            <keyword>where</keyword>
+            <keyword>import</keyword>
+            <keyword>data</keyword>
+            <keyword>type</keyword>
+            <keyword>newtype</keyword>
+            <keyword>deriving</keyword>
+            <keyword>class</keyword>
+            <keyword>instance</keyword>
+            <keyword>if</keyword>
+            <keyword>then</keyword>
+            <keyword>else</keyword>
+            <keyword>case</keyword>
+            <keyword>of</keyword>
+            <keyword>let</keyword>
+            <keyword>in</keyword>
+            <keyword>do</keyword>
+        </keywords>
+    </language>
+</languages>

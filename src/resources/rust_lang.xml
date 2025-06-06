@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<languages>
+    <language extentions="(rs)">
+        <single_comment expression="//[^\n]*"></single_comment>
+        <multiline_comment begin="/\*" end="\*/"></multiline_comment>
+        <keywords>
+            <keyword>fn</keyword>
+            <keyword>let</keyword>
+            <keyword>mut</keyword>
+            <keyword>pub</keyword>
+            <keyword>crate</keyword>
+            <keyword>mod</keyword>
+            <keyword>use</keyword>
+            <keyword>struct</keyword>
+            <keyword>enum</keyword>
+            <keyword>trait</keyword>
+            <keyword>impl</keyword>
+            <keyword>for</keyword>
+            <keyword>while</keyword>
+            <keyword>loop</keyword>
+            <keyword>match</keyword>
+            <keyword>if</keyword>
+            <keyword>else</keyword>
+            <keyword>return</keyword>
+            <keyword>break</keyword>
+            <keyword>continue</keyword>
+        </keywords>
+    </language>
+</languages>

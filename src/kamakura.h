@@ -51,6 +51,9 @@ private slots:
     void on_actionKamakura_triggered();
     void on_actionHowTo_triggered();
 
+    void setLightTheme();
+    void setDarkTheme();
+
     // Internal Logic Slots
     void openFileByPath(const QString& path);
     void closeTab(int index);

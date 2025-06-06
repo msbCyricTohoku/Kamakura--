@@ -10,7 +10,11 @@
 #include <QListWidget>
 #include <QDockWidget>
 #include <QMenu>
+#include <QActionGroup>
 #include <QMimeData>
+#include <QApplication>
+#include <QPalette>
+#include <QColor>
 #include <QDebug>
 #include <QStringListModel>
 #include <QCoreApplication>
@@ -28,11 +32,16 @@ kamakura::kamakura(QWidget *parent)
     // Load language files from the embedded Qt resources, using the correct prefix.
     highlighter = new Highlighter({":/new/prefix1/resources/phits_commands.xml",
                                    ":/new/prefix1/resources/python_lang.xml",
-                                   ":/new/prefix1/resources/cpp_lang.xml"}, this);
+                                   ":/new/prefix1/resources/cpp_lang.xml",
+                                   ":/new/prefix1/resources/rust_lang.xml",
+                                   ":/new/prefix1/resources/haskell_lang.xml",
+                                   ":/new/prefix1/resources/fortran_lang.xml",
+                                   ":/new/prefix1/resources/web_lang.xml"}, this);
 
     tabs = new QTabWidget(this);
     tabs->setMovable(true);
     tabs->setTabsClosable(true);
+    tabs->setFont(QFont("Sans Serif", 10));
     setCentralWidget(tabs);
     
     findDialog = new FindDialog(this);
@@ -55,11 +64,24 @@ void kamakura::setupDocks()
 {
     opened_docs_dock  = new QDockWidget("Opened Files", this);
     opened_docs_widget = new QListWidget(opened_docs_dock);
+    opened_docs_widget->setFont(QFont("Sans Serif", 10));
     opened_docs_dock->setWidget(opened_docs_widget);
     addDockWidget(Qt::RightDockWidgetArea, opened_docs_dock);
-    
+
     QMenu *viewMenu = menuBar()->addMenu(tr("&View"));
     viewMenu->addAction(opened_docs_dock->toggleViewAction());
+
+    QActionGroup* themeGroup = new QActionGroup(this);
+    QAction* lightTheme = viewMenu->addAction(tr("Light Theme"));
+    QAction* darkTheme = viewMenu->addAction(tr("Dark Theme"));
+    lightTheme->setCheckable(true);
+    darkTheme->setCheckable(true);
+    themeGroup->addAction(lightTheme);
+    themeGroup->addAction(darkTheme);
+    darkTheme->setChecked(true);
+
+    connect(lightTheme, &QAction::triggered, this, &kamakura::setLightTheme);
+    connect(darkTheme, &QAction::triggered, this, &kamakura::setDarkTheme);
 }
 
 void kamakura::setupConnections()
@@ -359,4 +381,28 @@ void kamakura::on_actionHowTo_triggered()
     QMessageBox::information(this, "How To",
         "Open a file (.inp, .i, .py) to see syntax highlighting and get code completion suggestions. "
         "More language definitions can be added by creating new XML files.");
+}
+
+void kamakura::setLightTheme()
+{
+    qApp->setPalette(qApp->style()->standardPalette());
+}
+
+void kamakura::setDarkTheme()
+{
+    qApp->setStyle("Fusion");
+    QPalette darkPalette;
+    darkPalette.setColor(QPalette::Window, QColor(53,53,53));
+    darkPalette.setColor(QPalette::WindowText, Qt::white);
+    darkPalette.setColor(QPalette::Base, QColor(42,42,42));
+    darkPalette.setColor(QPalette::AlternateBase, QColor(66,66,66));
+    darkPalette.setColor(QPalette::ToolTipBase, Qt::white);
+    darkPalette.setColor(QPalette::ToolTipText, Qt::white);
+    darkPalette.setColor(QPalette::Text, Qt::white);
+    darkPalette.setColor(QPalette::Button, QColor(53,53,53));
+    darkPalette.setColor(QPalette::ButtonText, Qt::white);
+    darkPalette.setColor(QPalette::BrightText, Qt::red);
+    darkPalette.setColor(QPalette::Highlight, QColor(142,45,197).lighter());
+    darkPalette.setColor(QPalette::HighlightedText, Qt::black);
+    qApp->setPalette(darkPalette);
 }

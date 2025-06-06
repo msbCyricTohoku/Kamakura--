@@ -19,5 +19,9 @@
         <file>resources/phits_commands.xml</file>
         <file>resources/python_lang.xml</file>
         <file>resources/cpp_lang.xml</file>
+        <file>resources/rust_lang.xml</file>
+        <file>resources/haskell_lang.xml</file>
+        <file>resources/fortran_lang.xml</file>
+        <file>resources/web_lang.xml</file>
     </qresource>
 </RCC>
