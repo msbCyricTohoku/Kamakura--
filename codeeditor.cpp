@@ -186,6 +186,12 @@ void CodeEditor::replaceAll(QString what, QString with, bool caseSensitive, bool
     connect(this, SIGNAL(textChanged()), this, SLOT(on_textChanged()));
 }
 
+void CodeEditor::updateMetrics()
+{
+    handleTextChanged();
+    handleCursorPositionChanged();
+}
+
 
 void CodeEditor::moveCursorTo(int positionInText)
 {

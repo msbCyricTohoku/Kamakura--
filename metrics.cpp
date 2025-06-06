@@ -47,4 +47,12 @@ void MetricReporter::updateColumnCount(int columnCount)
 {
     columnCountLabel->setText(QString::number(columnCount));
 }
+
+void MetricReporter::clearMetrics()
+{
+    wordCountLabel->clear();
+    charCountLabel->clear();
+    lineCountLabel->clear();
+    columnCountLabel->clear();
+}
 //Kamakura-- Mehrdad S. Beni and Hiroshi Watabe, Japan 2023

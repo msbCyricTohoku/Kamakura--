@@ -12,7 +12,6 @@
 #include <QMenu>
 #include <QMimeData>
 #include <QDebug>
-#include <QCompleter>
 #include <QStringListModel>
 #include <QCoreApplication>
 
@@ -246,9 +245,6 @@ void kamakura::onCurrentTabChanged(int index)
     highlighter->setExtension(fileInfo.suffix());
     highlighter->rehighlight();
 
-    QStringList keywords = highlighter->getKeywordsForExtension(fileInfo.suffix());
-    QCompleter *completer = new QCompleter(keywords, this);
-    editor->setCompleter(completer);
     
     disconnect(findDialog, &FindDialog::startFinding, nullptr, nullptr);
     disconnect(findDialog, &FindDialog::startReplacing, nullptr, nullptr);
@@ -260,8 +256,15 @@ void kamakura::onCurrentTabChanged(int index)
     connect(findDialog, &FindDialog::startReplacingAll, editor, &CodeEditor::replaceAll);
     connect(editor, &CodeEditor::findResultReady, findDialog, &FindDialog::onFindResultReady);
 
-    disconnect(editor, &CodeEditor::metricsChanged, nullptr, nullptr); 
-    connect(editor, &CodeEditor::metricsChanged, metricReporter, &MetricReporter::updateMetrics);
+    disconnect(editor, &CodeEditor::wordCountChanged, nullptr, nullptr);
+    disconnect(editor, &CodeEditor::charCountChanged, nullptr, nullptr);
+    disconnect(editor, &CodeEditor::lineChanged, nullptr, nullptr);
+    disconnect(editor, &CodeEditor::columnChanged, nullptr, nullptr);
+
+    connect(editor, &CodeEditor::wordCountChanged, metricReporter, &MetricReporter::updateWordCount);
+    connect(editor, &CodeEditor::charCountChanged, metricReporter, &MetricReporter::updateCharCount);
+    connect(editor, &CodeEditor::lineChanged, metricReporter, &MetricReporter::updateLineCount);
+    connect(editor, &CodeEditor::columnChanged, metricReporter, &MetricReporter::updateColumnCount);
     
     editor->updateMetrics(); 
     updateWindowTitle(tabs->tabToolTip(index));
