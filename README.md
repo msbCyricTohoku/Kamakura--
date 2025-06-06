@@ -14,10 +14,11 @@ make
 
 ## Features
 - Tabbed editing interface
-- Syntax highlighting for PHITS and Python
+- Syntax highlighting for PHITS, Python and C/C++
 - Search and replace dialog
 - Live document metrics in the status bar
 - Save and Save As functions
+- Optional dark theme for a modern look
 
 After compilation, run the generated binary and open your `.i` or `.inp` scripts.
 

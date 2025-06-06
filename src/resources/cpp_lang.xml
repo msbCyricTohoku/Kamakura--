@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<languages>
+    <language extentions="(c|h|cpp|hpp)">
+        <single_comment expression="//[^\n]*"></single_comment>
+        <multiline_comment begin="/\*" end="\*/"></multiline_comment>
+        <keywords>
+            <keyword>auto</keyword>
+            <keyword>break</keyword>
+            <keyword>case</keyword>
+            <keyword>char</keyword>
+            <keyword>class</keyword>
+            <keyword>const</keyword>
+            <keyword>continue</keyword>
+            <keyword>default</keyword>
+            <keyword>delete</keyword>
+            <keyword>do</keyword>
+            <keyword>double</keyword>
+            <keyword>else</keyword>
+            <keyword>enum</keyword>
+            <keyword>extern</keyword>
+            <keyword>float</keyword>
+            <keyword>for</keyword>
+            <keyword>goto</keyword>
+            <keyword>if</keyword>
+            <keyword>inline</keyword>
+            <keyword>int</keyword>
+            <keyword>long</keyword>
+            <keyword>namespace</keyword>
+            <keyword>new</keyword>
+            <keyword>private</keyword>
+            <keyword>protected</keyword>
+            <keyword>public</keyword>
+            <keyword>return</keyword>
+            <keyword>short</keyword>
+            <keyword>signed</keyword>
+            <keyword>sizeof</keyword>
+            <keyword>static</keyword>
+            <keyword>struct</keyword>
+            <keyword>switch</keyword>
+            <keyword>template</keyword>
+            <keyword>this</keyword>
+            <keyword>throw</keyword>
+            <keyword>try</keyword>
+            <keyword>typedef</keyword>
+            <keyword>typename</keyword>
+            <keyword>union</keyword>
+            <keyword>unsigned</keyword>
+            <keyword>virtual</keyword>
+            <keyword>void</keyword>
+            <keyword>volatile</keyword>
+            <keyword>while</keyword>
+        </keywords>
+    </language>
+</languages>

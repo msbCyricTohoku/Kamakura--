@@ -12,7 +12,7 @@
   </property>
   <property name="font">
    <font>
-    <pointsize>16</pointsize>
+    <pointsize>10</pointsize>
    </font>
   </property>
   <property name="windowTitle">
@@ -22,7 +22,7 @@
    <property name="font">
     <font>
      <family>TeX Gyre Adventor</family>
-     <pointsize>14</pointsize>
+     <pointsize>10</pointsize>
     </font>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0">
@@ -36,7 +36,7 @@
         <property name="font">
          <font>
           <family>TeX Gyre Adventor</family>
-          <pointsize>14</pointsize>
+          <pointsize>10</pointsize>
          </font>
         </property>
        </widget>
@@ -57,19 +57,20 @@
    <property name="font">
     <font>
      <family>TeX Gyre Adventor</family>
-     <pointsize>14</pointsize>
+    <pointsize>10</pointsize>
     </font>
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="font">
      <font>
       <family>TeX Gyre Adventor</family>
-      <pointsize>14</pointsize>
+      <pointsize>10</pointsize>
      </font>
     </property>
     <property name="title">
      <string>File</string>
     </property>
+    <addaction name="actionNew"/>
     <addaction name="actionOpen"/>
     <addaction name="actionQuit"/>
    </widget>
@@ -77,7 +78,7 @@
     <property name="font">
      <font>
       <family>TeX Gyre Adventor</family>
-      <pointsize>14</pointsize>
+      <pointsize>10</pointsize>
      </font>
     </property>
     <property name="title">
@@ -96,7 +97,7 @@
     <property name="font">
      <font>
       <family>TeX Gyre Adventor</family>
-      <pointsize>14</pointsize>
+      <pointsize>10</pointsize>
      </font>
     </property>
     <property name="title">
@@ -112,14 +113,14 @@
   <widget class="QStatusBar" name="statusbar">
    <property name="font">
     <font>
-     <pointsize>14</pointsize>
+     <pointsize>10</pointsize>
     </font>
    </property>
   </widget>
   <widget class="QToolBar" name="toolBar">
    <property name="font">
     <font>
-     <pointsize>18</pointsize>
+     <pointsize>10</pointsize>
     </font>
    </property>
    <property name="windowTitle">
@@ -131,6 +132,7 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionNew"/>
    <addaction name="actionOpen"/>
    <addaction name="actionSave_2"/>
    <addaction name="actionSave"/>
@@ -160,11 +162,29 @@
    <property name="font">
     <font>
      <family>TeX Gyre Adventor</family>
-     <pointsize>14</pointsize>
+     <pointsize>10</pointsize>
     </font>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actionNew">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/new/prefix1/resources/new.png</normaloff>:/new/prefix1/resources/new.png</iconset>
+   </property>
+   <property name="text">
+    <string>New</string>
+   </property>
+   <property name="font">
+    <font>
+     <family>TeX Gyre Adventor</family>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
    </property>
   </action>
   <action name="actionQuit">
@@ -178,7 +198,7 @@
    <property name="font">
     <font>
      <family>TeX Gyre Adventor</family>
-     <pointsize>14</pointsize>
+     <pointsize>10</pointsize>
     </font>
    </property>
    <property name="shortcut">
@@ -196,7 +216,7 @@
    <property name="font">
     <font>
      <family>TeX Gyre Adventor</family>
-     <pointsize>14</pointsize>
+     <pointsize>10</pointsize>
     </font>
    </property>
    <property name="shortcut">
@@ -214,7 +234,7 @@
    <property name="font">
     <font>
      <family>TeX Gyre Adventor</family>
-     <pointsize>14</pointsize>
+     <pointsize>10</pointsize>
     </font>
    </property>
    <property name="shortcut">
@@ -232,7 +252,7 @@
    <property name="font">
     <font>
      <family>TeX Gyre Adventor</family>
-     <pointsize>14</pointsize>
+     <pointsize>10</pointsize>
     </font>
    </property>
    <property name="shortcut">
@@ -250,7 +270,7 @@
    <property name="font">
     <font>
      <family>TeX Gyre Adventor</family>
-     <pointsize>14</pointsize>
+     <pointsize>10</pointsize>
     </font>
    </property>
    <property name="shortcut">
@@ -268,7 +288,7 @@
    <property name="font">
     <font>
      <family>TeX Gyre Adventor</family>
-     <pointsize>14</pointsize>
+     <pointsize>10</pointsize>
     </font>
    </property>
    <property name="shortcut">
@@ -286,7 +306,7 @@
    <property name="font">
     <font>
      <family>TeX Gyre Adventor</family>
-     <pointsize>14</pointsize>
+     <pointsize>10</pointsize>
     </font>
    </property>
    <property name="shortcut">
@@ -304,7 +324,7 @@
    <property name="font">
     <font>
      <family>TeX Gyre Adventor</family>
-     <pointsize>14</pointsize>
+     <pointsize>10</pointsize>
     </font>
    </property>
    <property name="shortcut">
@@ -322,7 +342,7 @@
    <property name="font">
     <font>
      <family>TeX Gyre Adventor</family>
-     <pointsize>14</pointsize>
+     <pointsize>10</pointsize>
     </font>
    </property>
    <property name="shortcut">
@@ -340,7 +360,7 @@
    <property name="font">
     <font>
      <family>TeX Gyre Adventor</family>
-     <pointsize>14</pointsize>
+     <pointsize>10</pointsize>
     </font>
    </property>
    <property name="shortcut">

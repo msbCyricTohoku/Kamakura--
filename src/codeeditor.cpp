@@ -17,6 +17,8 @@ CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
 {
     lineNumberArea = new LineNumberArea(this);
 
+    applyDarkTheme();
+
     connect(this, &CodeEditor::blockCountChanged, this, &CodeEditor::updateLineNumberAreaWidth);
     connect(this, &CodeEditor::updateRequest, this, &CodeEditor::updateLineNumberArea);
     connect(this, &CodeEditor::cursorPositionChanged, this, &CodeEditor::highlightCurrentLine);
@@ -74,9 +76,7 @@ void CodeEditor::highlightCurrentLine()
     if (!isReadOnly()) {
         QTextEdit::ExtraSelection selection;
 
-        QColor lineColor = QColor(Qt::cyan).lighter(170);
-
-        selection.format.setBackground(lineColor);
+        selection.format.setBackground(lineHighlightColor);
         selection.format.setProperty(QTextFormat::FullWidthSelection, true);
         selection.cursor = textCursor();
         selection.cursor.clearSelection();
@@ -88,7 +88,7 @@ void CodeEditor::highlightCurrentLine()
 
 void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event) {
     QPainter painter(lineNumberArea);
-    painter.fillRect(event->rect(), QColor(Qt::yellow).lighter(170));
+    painter.fillRect(event->rect(), lineNumberAreaBgColor);
     QTextBlock block = firstVisibleBlock();
     int blockNumber = block.blockNumber();
     int top = (int) blockBoundingGeometry(block).translated(contentOffset()).top();
@@ -97,7 +97,7 @@ void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event) {
     while (block.isValid() && top <= event->rect().bottom()) {
         if (block.isVisible() && bottom >= event->rect().top()) {
             QString number = QString::number(blockNumber + 1);
-            painter.setPen(Qt::red);
+            painter.setPen(lineNumberAreaTextColor);
             painter.drawText(0, top, lineNumberArea->width(), fontMetrics().height(),
                              Qt::AlignRight, number);
         }
@@ -233,5 +233,25 @@ void CodeEditor::handleCursorPositionChanged()
     metrics.totalLines = blockCount();
     emit lineChanged(metrics.currentLine, metrics.totalLines);
     emit columnChanged(metrics.currentColumn);
+}
+
+void CodeEditor::applyLightTheme()
+{
+    setStyleSheet("background-color:#ffffff;color:#000000;");
+    lineHighlightColor = QColor("#e0e0e0");
+    lineNumberAreaBgColor = QColor("#f0f0f0");
+    lineNumberAreaTextColor = QColor("#555555");
+    highlightCurrentLine();
+    lineNumberArea->update();
+}
+
+void CodeEditor::applyDarkTheme()
+{
+    setStyleSheet("background-color:#2b2b2b;color:#ffffff;");
+    lineHighlightColor = QColor("#333333");
+    lineNumberAreaBgColor = QColor("#444444");
+    lineNumberAreaTextColor = QColor("#aaaaaa");
+    highlightCurrentLine();
+    lineNumberArea->update();
 }
 //Kamakura-- Mehrdad S. Beni and Hiroshi Watabe, Japan 2023

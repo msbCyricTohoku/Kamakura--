@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<languages>
+    <language extentions="(html|htm)">
+        <multiline_comment begin="&lt;!--" end="--&gt;"></multiline_comment>
+        <keywords>
+            <keyword>html</keyword>
+            <keyword>head</keyword>
+            <keyword>body</keyword>
+            <keyword>div</keyword>
+            <keyword>span</keyword>
+            <keyword>script</keyword>
+            <keyword>style</keyword>
+            <keyword>link</keyword>
+            <keyword>meta</keyword>
+            <keyword>title</keyword>
+        </keywords>
+    </language>
+    <language extentions="(css)">
+        <multiline_comment begin="/\*" end="\*/"></multiline_comment>
+        <keywords>
+            <keyword>color</keyword>
+            <keyword>background</keyword>
+            <keyword>font-size</keyword>
+            <keyword>margin</keyword>
+            <keyword>padding</keyword>
+            <keyword>border</keyword>
+            <keyword>display</keyword>
+            <keyword>flex</keyword>
+        </keywords>
+    </language>
+</languages>
