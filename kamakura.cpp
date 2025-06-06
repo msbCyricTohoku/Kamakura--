@@ -99,6 +99,9 @@ void kamakura::on_actionNew_triggered()
 
     opened_docs_widget->addItem("Untitled");
     syncListSelectionWithTab(index);
+
+    // Ensure highlighter is set even if the currentChanged signal isn't emitted
+    onCurrentTabChanged(index);
 }
 
 void kamakura::on_actionOpen_triggered()
@@ -142,9 +145,12 @@ void kamakura::openFileByPath(const QString& path)
     int index = tabs->addTab(editor, fileInfo.fileName());
     tabs->setTabToolTip(index, path); 
     tabs->setCurrentIndex(index);
-    
+
     opened_docs_widget->addItem(fileInfo.fileName());
     syncListSelectionWithTab(index);
+
+    // Explicitly update highlighter in case currentChanged is not emitted
+    onCurrentTabChanged(index);
 }
 
 void kamakura::on_actionSave_triggered()
