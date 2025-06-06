@@ -4,6 +4,7 @@
 #include <QLabel>
 #include <QGroupBox>
 #include <QHBoxLayout>
+#include <QFrame>
 
 //Kamakura-- Mehrdad S. Beni and Hiroshi Watabe, Japan 2023
 
@@ -19,6 +20,7 @@ public slots:
     void updateCharCount(int charCount);
     void updateLineCount(int current, int total);
     void updateColumnCount(int columnCount);
+    void clearMetrics();
 
 private:
     QLabel *wordLabel;

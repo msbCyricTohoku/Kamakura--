@@ -41,6 +41,10 @@ signals:
     void startReplacing(QString what, QString with, bool caseSensitive, bool wholeWords);
     void startReplacingAll(QString what, QString with, bool caseSensitive, bool wholeWords);
     void interpTest(QString text);
+    void wordCountChanged(int count);
+    void charCountChanged(int count);
+    void lineChanged(int current, int total);
+    void columnChanged(int column);
 
 private slots:
     void updateLineNumberAreaWidth(int newBlockCount);
@@ -48,11 +52,14 @@ private slots:
     void updateLineNumberArea(const QRect &rect, int dy);
     void moveCursorTo(int positionInText);
     QTextDocument::FindFlags getSearchOptionsFromFlags(bool caseSensitive, bool wholeWords);
+    void handleTextChanged();
+    void handleCursorPositionChanged();
 
 public slots:
     bool find(QString query, bool caseSensitive, bool wholeWords);
     void replace(QString what, QString with, bool caseSensitive, bool wholeWords);
     void replaceAll(QString what, QString with, bool caseSensitive, bool wholeWords);
+    void updateMetrics();
 
 private:
     QWidget *lineNumberArea;
