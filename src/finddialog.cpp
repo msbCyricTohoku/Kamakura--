@@ -14,6 +14,8 @@ FindDialog::FindDialog(QWidget *parent)
 
 
     connect(FindKeywordButton, SIGNAL(clicked()), this, SLOT(on_FindKeywordButton_clicked()));
+    connect(FindBackwardButton, SIGNAL(clicked()), this, SLOT(on_FindBackwardButton_clicked()));
+    connect(exitButton, SIGNAL(clicked()), this, SLOT(on_exitButton_clicked()));
     connect(replaceButton, SIGNAL(clicked()), this, SLOT(on_replaceOperation_initiated()));
     connect(replaceAllButton, SIGNAL(clicked()), this, SLOT(on_replaceOperation_initiated()));
 }
@@ -28,6 +30,8 @@ FindDialog::~FindDialog()
     delete FindKeywordButton;
     delete replaceButton;
     delete replaceAllButton;
+    delete FindBackwardButton;
+    delete exitButton;
     delete findHorizontalLayout;
     delete replaceHorizontalLayout;
     delete optionsLayout;
@@ -37,7 +41,7 @@ FindDialog::~FindDialog()
 void FindDialog::initializeWidgets()
 {
     findLabel = new QLabel(tr("Keyword to search:    "));
-    QFont f( "Arial", 14, QFont::Normal);
+    QFont f( "Arial", 11, QFont::Normal);
     findLabel->setFont(f);
     //textLabel->setFont( f);
     //findLabel->setPixmap()
@@ -53,6 +57,10 @@ void FindDialog::initializeWidgets()
     replaceButton->setFont(f);
     replaceAllButton = new QPushButton(tr("&Replace all keywords"));
     replaceAllButton->setFont(f);
+    FindBackwardButton = new QPushButton(tr("&Find backward"));
+    FindBackwardButton->setFont(f);
+    exitButton = new QPushButton(tr("E&xit"));
+    exitButton->setFont(f);
 }
 
 
@@ -73,8 +81,10 @@ void FindDialog::initializeLayout()
     replaceHorizontalLayout->addWidget(replaceLineEdit);
 
     optionsLayout->addWidget(FindKeywordButton);
+    optionsLayout->addWidget(FindBackwardButton);
     optionsLayout->addWidget(replaceButton);
     optionsLayout->addWidget(replaceAllButton);
+    optionsLayout->addWidget(exitButton);
 
     setLayout(verticalLayout);
 }
@@ -92,6 +102,26 @@ void FindDialog::on_FindKeywordButton_clicked()
     bool caseSensitive = false;
     bool wholeWords = true;
     emit(startFinding(query, caseSensitive, wholeWords));
+}
+
+void FindDialog::on_FindBackwardButton_clicked()
+{
+    QString query = findLineEdit->text();
+
+    if (query.isEmpty())
+    {
+        QMessageBox::information(this, tr("No keyword"), tr("Please enter a keyword"));
+        return;
+    }
+
+    bool caseSensitive = false;
+    bool wholeWords = true;
+    emit(startFindingBackward(query, caseSensitive, wholeWords));
+}
+
+void FindDialog::on_exitButton_clicked()
+{
+    close();
 }
 
 

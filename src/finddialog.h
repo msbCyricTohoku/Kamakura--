@@ -24,12 +24,15 @@ public:
 signals:
 
     void startFinding(QString queryText, bool caseSensitive, bool wholeWords);
+    void startFindingBackward(QString queryText, bool caseSensitive, bool wholeWords);
     void startReplacing(QString what, QString with, bool caseSensitive, bool wholeWords);
     void startReplacingAll(QString what, QString with, bool caseSensitive, bool wholeWords);
 
 public slots:
 
     void on_FindKeywordButton_clicked();
+    void on_FindBackwardButton_clicked();
+    void on_exitButton_clicked();
     void on_replaceOperation_initiated();
     void onFindResultReady(QString message) { QMessageBox::information(this, "Search and Replace", message); }
 
@@ -41,8 +44,10 @@ private:
     QLabel *findLabel;
     QLabel *replaceLabel;
     QPushButton *FindKeywordButton;
+    QPushButton *FindBackwardButton;
     QPushButton *replaceButton;
     QPushButton *replaceAllButton;
+    QPushButton *exitButton;
     QLineEdit *findLineEdit;
     QLineEdit *replaceLineEdit;
     QHBoxLayout *findHorizontalLayout;
