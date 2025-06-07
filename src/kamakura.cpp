@@ -283,11 +283,13 @@ void kamakura::onCurrentTabChanged(int index)
 
     
     disconnect(findDialog, &FindDialog::startFinding, nullptr, nullptr);
+    disconnect(findDialog, &FindDialog::startFindingBackward, nullptr, nullptr);
     disconnect(findDialog, &FindDialog::startReplacing, nullptr, nullptr);
     disconnect(findDialog, &FindDialog::startReplacingAll, nullptr, nullptr);
     disconnect(editor, &CodeEditor::findResultReady, nullptr, nullptr);
 
     connect(findDialog, &FindDialog::startFinding, editor, &CodeEditor::find);
+    connect(findDialog, &FindDialog::startFindingBackward, editor, &CodeEditor::findBackward);
     connect(findDialog, &FindDialog::startReplacing, editor, &CodeEditor::replace);
     connect(findDialog, &FindDialog::startReplacingAll, editor, &CodeEditor::replaceAll);
     connect(editor, &CodeEditor::findResultReady, findDialog, &FindDialog::onFindResultReady);

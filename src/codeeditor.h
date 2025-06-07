@@ -61,6 +61,7 @@ private slots:
 
 public slots:
     bool find(QString query, bool caseSensitive, bool wholeWords);
+    bool findBackward(QString query, bool caseSensitive, bool wholeWords);
     void replace(QString what, QString with, bool caseSensitive, bool wholeWords);
     void replaceAll(QString what, QString with, bool caseSensitive, bool wholeWords);
     void updateMetrics();

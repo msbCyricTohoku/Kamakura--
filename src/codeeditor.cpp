@@ -137,6 +137,28 @@ bool CodeEditor::find(QString query, bool caseSensitive, bool wholeWords)
     return matchFound;
 }
 
+bool CodeEditor::findBackward(QString query, bool caseSensitive, bool wholeWords)
+{
+    int cursorPositionBeforeCurrentSearch = textCursor().position();
+
+    QTextDocument::FindFlags searchOptions = getSearchOptionsFromFlags(caseSensitive, wholeWords);
+    searchOptions |= QTextDocument::FindBackward;
+
+    bool matchFound = QPlainTextEdit::find(query, searchOptions);
+
+    if (!matchFound)
+    {
+        moveCursor(QTextCursor::End);
+        matchFound = QPlainTextEdit::find(query, searchOptions);
+    }
+    if (!matchFound)
+    {
+        moveCursorTo(cursorPositionBeforeCurrentSearch);
+    }
+
+    return matchFound;
+}
+
 
 void CodeEditor::replace(QString what, QString with, bool caseSensitive, bool wholeWords)
 {
