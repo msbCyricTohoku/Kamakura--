@@ -32,7 +32,7 @@
 
 ## 📸 Screenshot
 
-![Kamakura in Action](screen.png)
+![Kamakura in Action](screenshot.png)
 
 ---
 
@@ -75,7 +75,7 @@
 3. **Run**:
 
    ```bash
-   ./kamakura
+   ./Kamakura
    ```
 
 > Tip: On Windows/macOS, install the corresponding Qt SDK or use your package manager (e.g., Homebrew on macOS).
