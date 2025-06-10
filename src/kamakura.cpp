@@ -380,7 +380,7 @@ void kamakura::on_actionKamakura_triggered()
 {
     QMessageBox::about(this, "About Kamakura",
         "<p><b>Kamakura Code Editor</b></p>"
-        "<p>Version 1.1</p>"
+        "<p>Version 2.0</p>"
         "<p>A lightweight, extensible code editor.</p>"
         "<p>By Mehrdad S. Beni & Hiroshi Watabe, 2025.</p>");
 }
