@@ -56,7 +56,7 @@
 * **Dark Theme (Optional)**
   Give your eyes a break with a sleek, modern look.
 
-* **Tab key Indentation 
+* **Tab key Indentation**
   Now you can use tab key to do code indentation.
 ---
 
