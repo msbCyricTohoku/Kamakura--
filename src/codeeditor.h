@@ -12,6 +12,7 @@
 #include <QTextCursor>
 #include <QMessageBox>
 #include <QColor>
+#include <QList>
 #include "finddialog.h"
 #include "documentmetrics.h"
 
@@ -58,6 +59,7 @@ private slots:
     QTextDocument::FindFlags getSearchOptionsFromFlags(bool caseSensitive, bool wholeWords);
     void handleTextChanged();
     void handleCursorPositionChanged();
+    void highlightMatchingBracket(QList<QTextEdit::ExtraSelection>& selections);
 
 public slots:
     bool find(QString query, bool caseSensitive, bool wholeWords);
@@ -73,6 +75,7 @@ private:
      QColor lineHighlightColor;
      QColor lineNumberAreaBgColor;
      QColor lineNumberAreaTextColor;
+     QColor bracketMatchColor;
 
 };
 
