@@ -10,6 +10,7 @@
 #include <QFileInfo>
 #include <QtDebug>
 #include <QRegularExpression>
+#include <QString>
 
 //Kamakura-- Mehrdad S. Beni and Hiroshi Watabe, Japan 2023
 
@@ -81,9 +82,86 @@ void CodeEditor::highlightCurrentLine()
         selection.cursor = textCursor();
         selection.cursor.clearSelection();
         extraSelections.append(selection);
+        highlightMatchingBracket(extraSelections);
     }
 
     setExtraSelections(extraSelections);
+}
+
+void CodeEditor::highlightMatchingBracket(QList<QTextEdit::ExtraSelection>& selections)
+{
+    QTextCursor cursor = textCursor();
+    int pos = cursor.position();
+    int docLen = document()->characterCount();
+
+    auto addSelection = [&](int atPos) {
+        QTextEdit::ExtraSelection sel;
+        QTextCursor c(document());
+        c.setPosition(atPos);
+        c.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor);
+        sel.cursor = c;
+        sel.format.setBackground(bracketMatchColor);
+        sel.format.setForeground(Qt::black);
+        selections.append(sel);
+    };
+
+    auto findForward = [&](QChar openC, QChar closeC, int start){
+        int depth = 1;
+        for(int i=start; i<docLen; ++i){
+            QChar ch = document()->characterAt(i);
+            if(ch==openC) depth++;
+            else if(ch==closeC) depth--;
+            if(depth==0) return i;
+        }
+        return -1;
+    };
+
+    auto findBackward = [&](QChar openC, QChar closeC, int start){
+        int depth = 1;
+        for(int i=start; i>=0; --i){
+            QChar ch = document()->characterAt(i);
+            if(ch==closeC) depth++;
+            else if(ch==openC) depth--;
+            if(depth==0) return i;
+        }
+        return -1;
+    };
+
+    QChar before = pos > 0 ? document()->characterAt(pos-1) : QChar();
+    QChar after  = pos < docLen ? document()->characterAt(pos) : QChar();
+
+    int openPos = -1;
+    int closePos = -1;
+
+    auto matchPair = [&](QChar openC){
+        if(openC=='(') return QChar(')');
+        if(openC=='[') return QChar(']');
+        if(openC=='{') return QChar('}');
+        return QChar();
+    };
+
+    if(QString("([{" ).contains(before)) {
+        openPos = pos-1;
+        QChar closeC = matchPair(before);
+        closePos = findForward(before, closeC, pos);
+    } else if(QString("([{" ).contains(after)) {
+        openPos = pos;
+        QChar closeC = matchPair(after);
+        closePos = findForward(after, closeC, pos+1);
+    } else if(QString(")]}" ).contains(before)) {
+        closePos = pos-1;
+        QChar openC = matchPair(before==')'?'(':(before==']'?'[':'{'));
+        openPos = findBackward(openC, before, pos-2);
+    } else if(QString(")]}" ).contains(after)) {
+        closePos = pos;
+        QChar openC = matchPair(after==')'?'(':(after==']'?'[':'{'));
+        openPos = findBackward(openC, after, pos-1);
+    }
+
+    if(openPos!=-1 && closePos!=-1) {
+        addSelection(openPos);
+        addSelection(closePos);
+    }
 }
 
 void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event) {
@@ -263,6 +341,7 @@ void CodeEditor::applyLightTheme()
     lineHighlightColor = QColor("#e0e0e0");
     lineNumberAreaBgColor = QColor("#f0f0f0");
     lineNumberAreaTextColor = QColor("#555555");
+    bracketMatchColor = QColor("#ffd966");
     highlightCurrentLine();
     lineNumberArea->update();
 }
@@ -273,6 +352,7 @@ void CodeEditor::applyDarkTheme()
     lineHighlightColor = QColor("#333333");
     lineNumberAreaBgColor = QColor("#444444");
     lineNumberAreaTextColor = QColor("#aaaaaa");
+    bracketMatchColor = QColor("#806000");
     highlightCurrentLine();
     lineNumberArea->update();
 }
