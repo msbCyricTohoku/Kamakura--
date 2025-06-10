@@ -20,6 +20,8 @@ CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
 
     applyDarkTheme();
 
+    //applyLightTheme();
+
     connect(this, &CodeEditor::blockCountChanged, this, &CodeEditor::updateLineNumberAreaWidth);
     connect(this, &CodeEditor::updateRequest, this, &CodeEditor::updateLineNumberArea);
     connect(this, &CodeEditor::cursorPositionChanged, this, &CodeEditor::highlightCurrentLine);
@@ -69,6 +71,17 @@ void CodeEditor::resizeEvent(QResizeEvent *e)
     QRect cr = contentsRect();
     lineNumberArea->setGeometry(QRect(cr.left(), cr.top(), lineNumberAreaWidth(), cr.height()));
 }
+
+void CodeEditor::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Tab && textCursor().hasSelection()) {
+        bool unindent = event->modifiers() & Qt::ShiftModifier;
+        indentSelection(unindent);
+        return;
+    }
+    QPlainTextEdit::keyPressEvent(event);
+}
+
 
 void CodeEditor::highlightCurrentLine()
 {
@@ -355,5 +368,48 @@ void CodeEditor::applyDarkTheme()
     bracketMatchColor = QColor("#806000");
     highlightCurrentLine();
     lineNumberArea->update();
+}
+
+
+
+void CodeEditor::indentSelection(bool unindent)
+{
+    QTextCursor cursor = textCursor();
+    int start = cursor.selectionStart();
+    int end = cursor.selectionEnd();
+    QTextBlock startBlock = document()->findBlock(start);
+    QTextBlock endBlock = document()->findBlock(end - 1);
+
+    cursor.beginEditBlock();
+    for (QTextBlock block = startBlock; ; block = block.next()) {
+        QTextCursor lineCursor(block);
+        lineCursor.movePosition(QTextCursor::StartOfBlock);
+        if (unindent) {
+            QString text = block.text();
+            int removeCount = 0;
+            for (int i = 0; i < NUM_CHARS_FOR_TAB && i < text.length(); ++i) {
+                if (text.at(i) == QLatin1Char(' '))
+                    removeCount++;
+                else
+                    break;
+            }
+            if (removeCount > 0) {
+                lineCursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor, removeCount);
+                lineCursor.removeSelectedText();
+            }
+        } else {
+            lineCursor.insertText(QString(NUM_CHARS_FOR_TAB, QLatin1Char(' ')));
+        }
+        if (block == endBlock)
+            break;
+    }
+    cursor.endEditBlock();
+
+    QTextCursor newCursor(document());
+    newCursor.setPosition(startBlock.position());
+    QTextBlock afterEnd = endBlock.next();
+    int endPos = afterEnd.isValid() ? afterEnd.position() - 1 : document()->characterCount() - 1;
+    newCursor.setPosition(endPos, QTextCursor::KeepAnchor);
+    setTextCursor(newCursor);
 }
 //Kamakura-- Mehrdad S. Beni and Hiroshi Watabe, Japan 2023

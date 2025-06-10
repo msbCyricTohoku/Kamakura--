@@ -51,7 +51,9 @@ kamakura::kamakura(QWidget *parent)
     setupDocks();
     setupConnections();
 
-    setDarkTheme();
+    //setDarkTheme();
+
+    setLightTheme();
 
     on_actionNew_triggered(); // Start with a new, empty tab
     updateWindowTitle("");
@@ -80,7 +82,8 @@ void kamakura::setupDocks()
     darkTheme->setCheckable(true);
     themeGroup->addAction(lightTheme);
     themeGroup->addAction(darkTheme);
-    darkTheme->setChecked(true);
+    //darkTheme->setChecked(true);
+    lightTheme->setChecked(true);
 
     connect(lightTheme, &QAction::triggered, this, &kamakura::setLightTheme);
     connect(darkTheme, &QAction::triggered, this, &kamakura::setDarkTheme);

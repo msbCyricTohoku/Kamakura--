@@ -11,6 +11,7 @@
 #include <QTextFormat>
 #include <QTextCursor>
 #include <QMessageBox>
+#include <QKeyEvent>
 #include <QColor>
 #include <QList>
 #include "finddialog.h"
@@ -38,6 +39,7 @@ public:
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
+     void keyPressEvent(QKeyEvent *event) override;
 
 signals:
     void findResultReady(QString message);
@@ -70,6 +72,7 @@ public slots:
 
 private:
     QWidget *lineNumberArea;
+    void indentSelection(bool unindent);
      DocumentMetrics metrics;
      QString getFileNameFromPath();
      QColor lineHighlightColor;

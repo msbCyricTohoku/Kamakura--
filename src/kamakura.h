@@ -71,7 +71,8 @@ private:
     FindDialog *findDialog;
     MetricReporter *metricReporter;
 
-    bool darkThemeEnabled{true};
+    //bool darkThemeEnabled{true};
+    bool darkThemeEnabled{false};
     
     QDockWidget* opened_docs_dock;
     QListWidget* opened_docs_widget;
