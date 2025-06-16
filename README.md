@@ -30,6 +30,12 @@
 
 ---
 
+## 🎬 Video Clip
+
+![Kamakura Animation](kamakura.gif)
+
+---
+
 ## 📸 Screenshots
 
 ![Kamakura in Action](screen.png)
@@ -66,6 +72,9 @@
 
 * **Language Toggle**
   Switch between English and Japanese language.
+
+* **ChatGPT and Gemini integration**
+  Use ChatGPT or Gemini LLM within Kamakura using your API key.
 ---
 
 ## 📦 Installation
