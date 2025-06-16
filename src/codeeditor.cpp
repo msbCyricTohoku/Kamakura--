@@ -11,12 +11,17 @@
 #include <QtDebug>
 #include <QRegularExpression>
 #include <QString>
+#include <QMenu>
+#include <QAction>
+#include <QContextMenuEvent>
+#include <QInputDialog>
 
 //Kamakura-- Mehrdad S. Beni and Hiroshi Watabe, Japan 2023
 
 CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
 {
     lineNumberArea = new LineNumberArea(this);
+    aiRequester = new AIRequester(this);
 
     setLineWrapMode(QPlainTextEdit::WidgetWidth);
     
@@ -84,6 +89,20 @@ void CodeEditor::keyPressEvent(QKeyEvent *event)
         return;
     }
     QPlainTextEdit::keyPressEvent(event);
+}
+
+void CodeEditor::contextMenuEvent(QContextMenuEvent *event)
+{
+    QMenu *menu = createStandardContextMenu();
+    if (textCursor().hasSelection()) {
+        QMenu *aiMenu = menu->addMenu(tr("Ask AI"));
+        QAction *chatAct = aiMenu->addAction(tr("Ask ChatGPT"));
+        QAction *geminiAct = aiMenu->addAction(tr("Ask Gemini"));
+        connect(chatAct, &QAction::triggered, this, &CodeEditor::handleAskChatGPT);
+        connect(geminiAct, &QAction::triggered, this, &CodeEditor::handleAskGemini);
+    }
+    menu->exec(event->globalPos());
+    delete menu;
 }
 
 
@@ -421,4 +440,54 @@ void CodeEditor::indentSelection(bool unindent)
     newCursor.setPosition(endPos, QTextCursor::KeepAnchor);
     setTextCursor(newCursor);
 }
+
+
+void CodeEditor::handleAskChatGPT()
+{
+    QString selected = textCursor().selectedText();
+    if (selected.isEmpty())
+        return;
+
+    if (aiRequester->chatGPTKey().isEmpty()) {
+        bool ok = false;
+        QString key = QInputDialog::getText(this, tr("ChatGPT API Key"),
+                                            tr("Enter your OpenAI API key"), QLineEdit::Normal,
+                                            QString(), &ok);
+        if (!ok || key.isEmpty())
+            return;
+        aiRequester->setChatGPTKey(key);
+    }
+
+    QString response = aiRequester->askChatGPT(selected);
+    if (!response.isEmpty()) {
+        QTextCursor c = textCursor();
+        c.setPosition(c.selectionEnd());
+        c.insertText("\n" + response + "\n");
+    }
+}
+
+void CodeEditor::handleAskGemini()
+{
+    QString selected = textCursor().selectedText();
+    if (selected.isEmpty())
+        return;
+
+    if (aiRequester->geminiKey().isEmpty()) {
+        bool ok = false;
+        QString key = QInputDialog::getText(this, tr("Gemini API Key"),
+                                            tr("Enter your Google Gemini API key"), QLineEdit::Normal,
+                                            QString(), &ok);
+        if (!ok || key.isEmpty())
+            return;
+        aiRequester->setGeminiKey(key);
+    }
+
+    QString response = aiRequester->askGemini(selected);
+    if (!response.isEmpty()) {
+        QTextCursor c = textCursor();
+        c.setPosition(c.selectionEnd());
+        c.insertText("\n" + response + "\n");
+    }
+}
+
 //Kamakura-- Mehrdad S. Beni and Hiroshi Watabe, Japan 2023

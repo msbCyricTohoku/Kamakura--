@@ -1,6 +1,7 @@
 QT       += core gui \
         printsupport \
-        xml
+        xml \
+        network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -14,14 +15,17 @@ INCLUDEPATH += src
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    src/airequester.cpp \
     src/codeeditor.cpp \
     src/finddialog.cpp \
     src/highlighter.cpp \
     src/main.cpp \
     src/kamakura.cpp \
     src/metrics.cpp
+    src/airequester.cpp
 
 HEADERS += \
+    src/airequester.h \
     src/codeeditor.h \
     src/documentmetrics.h \
     src/finddialog.h \
@@ -29,6 +33,7 @@ HEADERS += \
     src/kamakura.h \
     src/linenumberarea.h \
     src/metrics.h
+    src/airequester.h
 
 FORMS += \
     src/kamakura.ui

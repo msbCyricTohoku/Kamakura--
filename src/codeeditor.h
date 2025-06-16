@@ -16,7 +16,7 @@
 #include <QList>
 #include "finddialog.h"
 #include "documentmetrics.h"
-
+#include "airequester.h"
 
 //Kamakura-- Mehrdad S. Beni and Hiroshi Watabe, Japan 2023
 class CodeEditor : public QPlainTextEdit {
@@ -41,6 +41,7 @@ public:
          inline QString getFileName() { return getFileNameFromPath(); }
 
 protected:
+    void contextMenuEvent(QContextMenuEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;
      void keyPressEvent(QKeyEvent *event) override;
 
@@ -72,6 +73,8 @@ public slots:
     void replace(QString what, QString with, bool caseSensitive, bool wholeWords);
     void replaceAll(QString what, QString with, bool caseSensitive, bool wholeWords);
     void updateMetrics();
+    void handleAskChatGPT();
+    void handleAskGemini();
 
 private:
     QWidget *lineNumberArea;
@@ -82,6 +85,8 @@ private:
      QColor lineNumberAreaBgColor;
      QColor lineNumberAreaTextColor;
      QColor bracketMatchColor;
+
+     AIRequester* aiRequester{nullptr};
     
      bool wordWrapEnabled{true};
 
