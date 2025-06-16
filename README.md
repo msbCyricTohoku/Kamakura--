@@ -36,14 +36,6 @@
 
 ---
 
-## 📸 Screenshots
-
-![Kamakura in Action](screen.png)
-
-![Kamakura in Action2](screen2.png)
-
----
-
 ## ✨ Features
 
 * **Tabbed Editing**
