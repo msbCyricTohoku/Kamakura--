@@ -19,6 +19,7 @@ class QListWidgetItem;
 class QModelIndex;
 class QDragEnterEvent;
 class QDropEvent;
+class QAction;
 
 
 //Kamakura-- Mehrdad S. Beni and Hiroshi Watabe, Japan 2023
@@ -53,6 +54,7 @@ private slots:
 
     void setLightTheme();
     void setDarkTheme();
+    void toggleWordWrap(bool enabled);
 
     // Internal Logic Slots
     void openFileByPath(const QString& path);
@@ -73,6 +75,8 @@ private:
 
     //bool darkThemeEnabled{true};
     bool darkThemeEnabled{false};
+        bool wordWrapEnabled{true};
+    QAction* wordWrapAction{nullptr};
     
     QDockWidget* opened_docs_dock;
     QListWidget* opened_docs_widget;

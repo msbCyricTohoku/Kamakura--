@@ -28,6 +28,9 @@ public:
     void applyLightTheme();
     void applyDarkTheme();
 
+     void setWordWrap(bool enable);
+    bool isWordWrapEnabled() const { return wordWrapEnabled; }
+
     inline DocumentMetrics getDocumentMetrics() const { return metrics; }
 
     void lineNumberAreaPaintEvent(QPaintEvent *event);
@@ -79,6 +82,8 @@ private:
      QColor lineNumberAreaBgColor;
      QColor lineNumberAreaTextColor;
      QColor bracketMatchColor;
+    
+     bool wordWrapEnabled{true};
 
 };
 

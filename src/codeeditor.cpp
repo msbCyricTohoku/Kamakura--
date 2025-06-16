@@ -18,6 +18,10 @@ CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
 {
     lineNumberArea = new LineNumberArea(this);
 
+    setLineWrapMode(QPlainTextEdit::WidgetWidth);
+    
+    wordWrapEnabled = true;
+
     applyDarkTheme();
 
     //applyLightTheme();
@@ -370,6 +374,11 @@ void CodeEditor::applyDarkTheme()
     lineNumberArea->update();
 }
 
+void CodeEditor::setWordWrap(bool enable)
+{
+    wordWrapEnabled = enable;
+    setLineWrapMode(enable ? QPlainTextEdit::WidgetWidth : QPlainTextEdit::NoWrap);
+}
 
 
 void CodeEditor::indentSelection(bool unindent)

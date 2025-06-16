@@ -58,6 +58,9 @@
 
 * **Tab key Indentation**
   Now you can use tab key to do code indentation.
+
+* **Word Wrap Toggle**
+  Quickly switch line wrapping on or off from the View menu.
 ---
 
 ## 📦 Installation

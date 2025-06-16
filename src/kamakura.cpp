@@ -85,6 +85,10 @@ void kamakura::setupDocks()
     //darkTheme->setChecked(true);
     lightTheme->setChecked(true);
 
+    wordWrapAction = viewMenu->addAction(tr("Word Wrap"));
+    wordWrapAction->setCheckable(true);
+    wordWrapAction->setChecked(wordWrapEnabled);
+
     connect(lightTheme, &QAction::triggered, this, &kamakura::setLightTheme);
     connect(darkTheme, &QAction::triggered, this, &kamakura::setDarkTheme);
 }
@@ -95,6 +99,8 @@ void kamakura::setupConnections()
     connect(tabs, &QTabWidget::tabCloseRequested, this, &kamakura::closeTab);
     connect(tabs->tabBar(), &QTabBar::tabMoved, this, &kamakura::handleTabMoved);
     connect(opened_docs_widget, &QListWidget::itemClicked, this, &kamakura::syncTabSelectionWithList);
+
+    connect(wordWrapAction, &QAction::toggled, this, &kamakura::toggleWordWrap);
 }
 
 void kamakura::setupEditor(CodeEditor* editor)
@@ -110,6 +116,8 @@ void kamakura::setupEditor(CodeEditor* editor)
         editor->applyDarkTheme();
     else
         editor->applyLightTheme();
+
+    editor->setWordWrap(wordWrapEnabled);
 
     connect(editor, &QPlainTextEdit::modificationChanged, this, &kamakura::updateTabDirtyStatus);
 }
@@ -405,6 +413,17 @@ void kamakura::setLightTheme()
         }
     }
 }
+
+void kamakura::toggleWordWrap(bool enabled)
+{
+    wordWrapEnabled = enabled;
+    for (int i = 0; i < tabs->count(); ++i) {
+        if (auto editor = qobject_cast<CodeEditor*>(tabs->widget(i))) {
+            editor->setWordWrap(enabled);
+        }
+    }
+}
+
 
 void kamakura::setDarkTheme()
 {
