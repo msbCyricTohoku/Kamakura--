@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QList>
+#include "language.h"
 
 // Forward Declarations
 QT_BEGIN_NAMESPACE
@@ -55,6 +56,7 @@ private slots:
     void setLightTheme();
     void setDarkTheme();
     void toggleWordWrap(bool enabled);
+    void setLanguage(Language lang);
 
     // Internal Logic Slots
     void openFileByPath(const QString& path);
@@ -78,13 +80,20 @@ private:
         bool wordWrapEnabled{true};
     QAction* wordWrapAction{nullptr};
     
+    QAction* englishAction{nullptr};
+    QAction* japaneseAction{nullptr};
+    QMenu* languageMenu{nullptr};
+    
     QDockWidget* opened_docs_dock;
     QListWidget* opened_docs_widget;
+
+    Language currentLanguage{Language::English};
 
     void setupEditor(CodeEditor* editor);
     void setupDocks();
     void setupConnections();
     void updateWindowTitle(const QString& currentFile);
     CodeEditor* currentEditor();
+    QString trLang(const QString& en, const QString& ja) const;
 };
 #endif // KAMAKURA_H

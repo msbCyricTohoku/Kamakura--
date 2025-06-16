@@ -25,7 +25,7 @@
    ```bash
    qmake
    make
-   ./kamakura        # or double-click the generated binary
+   ./Kamakura        # or double-click the generated binary
    ```
 
 ---
@@ -61,6 +61,9 @@
 
 * **Word Wrap Toggle**
   Quickly switch line wrapping on or off from the View menu.
+
+* **Language Toggle**
+  Switch between English and Japanese language.
 ---
 
 ## 📦 Installation

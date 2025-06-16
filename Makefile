@@ -589,11 +589,13 @@ moc_highlighter.cpp: src/highlighter.h \
 	/usr/bin/moc $(DEFINES) --include /home/ben/Desktop/Kamakura--/moc_predefs.h -I/usr/lib/qt/mkspecs/linux-g++ -I/home/ben/Desktop/Kamakura-- -I/home/ben/Desktop/Kamakura--/src -I/usr/include/qt -I/usr/include/qt/QtPrintSupport -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtGui -I/usr/include/qt/QtXml -I/usr/include/qt/QtCore -I/usr/include/c++/15.1.1 -I/usr/include/c++/15.1.1/x86_64-pc-linux-gnu -I/usr/include/c++/15.1.1/backward -I/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/include -I/usr/local/include -I/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/include-fixed -I/usr/include src/highlighter.h -o moc_highlighter.cpp
 
 moc_kamakura.cpp: src/kamakura.h \
+		src/language.h \
 		moc_predefs.h \
 		/usr/bin/moc
 	/usr/bin/moc $(DEFINES) --include /home/ben/Desktop/Kamakura--/moc_predefs.h -I/usr/lib/qt/mkspecs/linux-g++ -I/home/ben/Desktop/Kamakura-- -I/home/ben/Desktop/Kamakura--/src -I/usr/include/qt -I/usr/include/qt/QtPrintSupport -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtGui -I/usr/include/qt/QtXml -I/usr/include/qt/QtCore -I/usr/include/c++/15.1.1 -I/usr/include/c++/15.1.1/x86_64-pc-linux-gnu -I/usr/include/c++/15.1.1/backward -I/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/include -I/usr/local/include -I/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/include-fixed -I/usr/include src/kamakura.h -o moc_kamakura.cpp
 
 moc_metrics.cpp: src/metrics.h \
+		src/language.h \
 		moc_predefs.h \
 		/usr/bin/moc
 	/usr/bin/moc $(DEFINES) --include /home/ben/Desktop/Kamakura--/moc_predefs.h -I/usr/lib/qt/mkspecs/linux-g++ -I/home/ben/Desktop/Kamakura-- -I/home/ben/Desktop/Kamakura--/src -I/usr/include/qt -I/usr/include/qt/QtPrintSupport -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtGui -I/usr/include/qt/QtXml -I/usr/include/qt/QtCore -I/usr/include/c++/15.1.1 -I/usr/include/c++/15.1.1/x86_64-pc-linux-gnu -I/usr/include/c++/15.1.1/backward -I/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/include -I/usr/local/include -I/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/include-fixed -I/usr/include src/metrics.h -o moc_metrics.cpp
@@ -634,10 +636,12 @@ finddialog.o: src/finddialog.cpp src/finddialog.h
 highlighter.o: src/highlighter.cpp src/highlighter.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o highlighter.o src/highlighter.cpp
 
-main.o: src/main.cpp src/kamakura.h
+main.o: src/main.cpp src/kamakura.h \
+		src/language.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o src/main.cpp
 
 kamakura.o: src/kamakura.cpp src/kamakura.h \
+		src/language.h \
 		ui_kamakura.h \
 		src/codeeditor.h \
 		src/finddialog.h \
@@ -646,7 +650,8 @@ kamakura.o: src/kamakura.cpp src/kamakura.h \
 		src/metrics.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o kamakura.o src/kamakura.cpp
 
-metrics.o: src/metrics.cpp src/metrics.h
+metrics.o: src/metrics.cpp src/metrics.h \
+		src/language.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o metrics.o src/metrics.cpp
 
 qrc_resources.o: qrc_resources.cpp 

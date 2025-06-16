@@ -55,6 +55,8 @@ kamakura::kamakura(QWidget *parent)
 
     setLightTheme();
 
+     setLanguage(currentLanguage);
+
     on_actionNew_triggered(); // Start with a new, empty tab
     updateWindowTitle("");
 }
@@ -72,12 +74,21 @@ void kamakura::setupDocks()
     opened_docs_dock->setWidget(opened_docs_widget);
     addDockWidget(Qt::RightDockWidgetArea, opened_docs_dock);
 
-    QMenu *viewMenu = menuBar()->addMenu(tr("&View"));
+    //QMenu *viewMenu = menuBar()->addMenu(tr("&View"));
+    
+    QMenu *viewMenu = menuBar()->addMenu("&View");
+
+
     viewMenu->addAction(opened_docs_dock->toggleViewAction());
 
     QActionGroup* themeGroup = new QActionGroup(this);
-    QAction* lightTheme = viewMenu->addAction(tr("Light Theme"));
-    QAction* darkTheme = viewMenu->addAction(tr("Dark Theme"));
+    
+    //QAction* lightTheme = viewMenu->addAction(tr("Light Theme"));
+    //QAction* darkTheme = viewMenu->addAction(tr("Dark Theme"));
+
+    QAction* lightTheme = viewMenu->addAction("Light Theme");
+    QAction* darkTheme = viewMenu->addAction("Dark Theme");
+
     lightTheme->setCheckable(true);
     darkTheme->setCheckable(true);
     themeGroup->addAction(lightTheme);
@@ -85,12 +96,29 @@ void kamakura::setupDocks()
     //darkTheme->setChecked(true);
     lightTheme->setChecked(true);
 
-    wordWrapAction = viewMenu->addAction(tr("Word Wrap"));
+    //wordWrapAction = viewMenu->addAction(tr("Word Wrap"));
+
+    wordWrapAction = viewMenu->addAction("Word Wrap");
+
     wordWrapAction->setCheckable(true);
     wordWrapAction->setChecked(wordWrapEnabled);
 
     connect(lightTheme, &QAction::triggered, this, &kamakura::setLightTheme);
     connect(darkTheme, &QAction::triggered, this, &kamakura::setDarkTheme);
+
+   languageMenu = menuBar()->addMenu("Language");
+    QActionGroup* langGroup = new QActionGroup(this);
+    englishAction = languageMenu->addAction("English");
+    japaneseAction = languageMenu->addAction("Japanese");
+    englishAction->setCheckable(true);
+    japaneseAction->setCheckable(true);
+    langGroup->addAction(englishAction);
+    langGroup->addAction(japaneseAction);
+    englishAction->setChecked(true);
+
+    connect(englishAction, &QAction::triggered, [this](){ setLanguage(Language::English); });
+    connect(japaneseAction, &QAction::triggered, [this](){ setLanguage(Language::Japanese); });
+
 }
 
 void kamakura::setupConnections()
@@ -147,7 +175,11 @@ void kamakura::on_actionNew_triggered()
 
 void kamakura::on_actionOpen_triggered()
 {
-    QString filePath = QFileDialog::getOpenFileName(this, "Open File", QDir::homePath());
+    //QString filePath = QFileDialog::getOpenFileName(this, "Open File", QDir::homePath());
+    QString filePath = QFileDialog::getOpenFileName(this,
+                                                   trLang("Open File", "\xE3\x83\x95\xE3\x82\xA1\xE3\x82\xA4\xE3\x83\xAB\xE3\x82\x92\xE9\x96\x8B\xE3\x81\x8F"),
+                                                   QDir::homePath());
+
     if (!filePath.isEmpty()) {
         openFileByPath(filePath);
     }
@@ -164,7 +196,10 @@ void kamakura::openFileByPath(const QString& path)
 
     QFile file(path);
     if (!file.open(QFile::ReadOnly | QFile::Text)) {
-        QMessageBox::warning(this, "Error", "Could not open file: " + file.errorString());
+        //QMessageBox::warning(this, "Error", "Could not open file: " + file.errorString());
+        QMessageBox::warning(this,
+                             trLang("Error", "\xE3\x82\xA8\xE3\x83\xA9\xE3\x83\xBC"),
+                             trLang("Could not open file: ", "\xE3\x83\x95\xE3\x82\xA1\xE3\x82\xA4\xE3\x83\xAB\xE3\x82\x92\xE9\x96\x8B\xE3\x81\x91\xE3\x81\xBE\xE3\x81\x9B\xE3\x82\x93: ") + file.errorString());
         return;
     }
     
@@ -199,7 +234,12 @@ void kamakura::on_actionSave_triggered()
     CodeEditor* editor = currentEditor();
     if (!editor) return;
 
-    QString filePath = QFileDialog::getSaveFileName(this, "Save File As", QDir::homePath());
+    //QString filePath = QFileDialog::getSaveFileName(this, "Save File As", QDir::homePath());
+
+    QString filePath = QFileDialog::getSaveFileName(this,
+                                                   trLang("Save File As", "\xE5\x90\x8D\xE5\x89\x8D\xE3\x82\x92\xE4\xBB\x98\xE3\x81\x91\xE3\x81\xA6\xE4\xBF\x9D\xE5\xAD\x98"),
+                                                   QDir::homePath());
+
     if (filePath.isEmpty()) return;
 
     tabs->setTabToolTip(tabs->currentIndex(), filePath);
@@ -224,14 +264,19 @@ void kamakura::on_actionSave_2_triggered()
 
     QFile file(filePath);
     if (!file.open(QFile::WriteOnly | QFile::Text)) {
-        QMessageBox::warning(this, "Error", "Could not save file: " + file.errorString());
+        //QMessageBox::warning(this, "Error", "Could not save file: " + file.errorString());
+        QMessageBox::warning(this,
+                             trLang("Error", "\xE3\x82\xA8\xE3\x83\xA9\xE3\x83\xBC"),
+                             trLang("Could not save file: ", "\xE3\x83\x95\xE3\x82\xA1\xE3\x82\xA4\xE3\x83\xAB\xE3\x82\x92\xE4\xBF\x9D\xE5\xAD\x98\xE3\x81\xA7\xE3\x81\x8D\xE3\x81\xBE\xE3\x81\x9B\xE3\x82\x93: ") + file.errorString());
+
         return;
     }
 
     file.write(editor->toPlainText().toUtf8());
     file.close();
     editor->document()->setModified(false);
-    ui->statusbar->showMessage("File saved", 2000);
+    //ui->statusbar->showMessage("File saved", 2000);
+    ui->statusbar->showMessage(trLang("File saved", "\xE4\xBF\x9D\xE5\xAD\x98\xE5\xAE\x8C\xE4\xBA\x86"), 2000);
 }
 
 
@@ -240,8 +285,13 @@ void kamakura::closeTab(int index)
     CodeEditor* editor = qobject_cast<CodeEditor*>(tabs->widget(index));
     if (editor && editor->document()->isModified()) {
         QMessageBox::StandardButton reply;
-        reply = QMessageBox::question(this, "Unsaved Changes",
-            "'" + tabs->tabText(index) + "' has been modified. Save changes?",
+        //reply = QMessageBox::question(this, "Unsaved Changes",
+        //    "'" + tabs->tabText(index) + "' has been modified. Save changes?",
+
+        reply = QMessageBox::question(this,
+            trLang("Unsaved Changes", "\xE4\xBF\x9D\xE5\xAD\x98\xE3\x81\x95\xE3\x82\x8C\xE3\x81\xA6\xE3\x81\x84\xE3\x81\xAA\xE3\x81\x84\xE5\xA4\x89\xE6\x9B\xB4"),
+            trLang("'" + tabs->tabText(index) + "' has been modified. Save changes?",
+                  "'" + tabs->tabText(index) + "'\xE3\x81\xAF\xE7\xB7\xA8\xE9\x9B\x86\xE3\x81\x95\xE3\x82\x8C\xE3\x81\xBE\xE3\x81\x97\xE3\x81\x9F\xE3\x80\x82\xE4\xBF\x9D\xE5\xAD\x98\xE3\x81\x97\xE3\x81\xBE\xE3\x81\x99\xE3\x81\x8B\xEF\xBC\x9F"),
             QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
 
         if (reply == QMessageBox::Save) {
@@ -389,18 +439,47 @@ void kamakura::on_actionSearch_and_Replace_triggered()
 
 void kamakura::on_actionKamakura_triggered()
 {
-    QMessageBox::about(this, "About Kamakura",
+    //QMessageBox::about(this, "About Kamakura",
+       // "<p><b>Kamakura Code Editor</b></p>"
+        //"<p>Version 2.0</p>"
+        //"<p>A lightweight, extensible code editor.</p>"
+        //"<p>By Mehrdad S. Beni & Hiroshi Watabe, 2025.</p>");
+QMessageBox::about(
+    this,
+    trLang("About Kamakura", "Kamakura\xE3\x81\xAB\xE3\x81\xA4\xE3\x81\x84\xE3\x81\xA6"),
+    trLang(
         "<p><b>Kamakura Code Editor</b></p>"
         "<p>Version 2.0</p>"
         "<p>A lightweight, extensible code editor.</p>"
-        "<p>By Mehrdad S. Beni & Hiroshi Watabe, 2025.</p>");
+        "<p>By Mehrdad S. Beni & Hiroshi Watabe, 2025.</p>",
+        "<p><b>Kamakura\xE3\x82\xB3\xE3\x83\xBC\xE3\x83\x89\xE3\x82\xA8\xE3\x83\x87\xE3\x82\xA3\xE3\x82\xBF</b></p>"
+        "<p>\xE3\x83\x90\xE3\x83\xBC\xE3\x82\xB8\xE3\x83\xA7\xE3\x83\xB3 2.0</p>"
+        "<p>\xE8\xBB\xBD\xE9\x87\x8F\xE3\x81\xA7\xE6\x8B\xA1\xE5\xBC\xB5\xE6\x80\xA7\xE3\x81\xAE\xE3\x81\x82\xE3\x82\x8B\xE3\x82\xB3\xE3\x83\xBC\xE3\x83\x89\xE3\x82\xA8\xE3\x83\x87\xE3\x82\xA3\xE3\x82\xBF\xE3\x81\xA7\xE3\x81\x99\xE3\x80\x82</p>"
+        "<p>Mehrdad S. Beni & Hiroshi Watabe, 2025.</p>"
+    )
+);
+
 }
 
 void kamakura::on_actionHowTo_triggered()
 {
-    QMessageBox::information(this, "How To",
+QMessageBox::information(
+    this,
+    trLang("How To", "\xE4\xBD\xBF\xE3\x81\x84\xE6\x96\xB9"),
+    trLang(
         "Open a file (.inp, .i, .py) to see syntax highlighting and get code completion suggestions. "
-        "More language definitions can be added by creating new XML files.");
+        "More language definitions can be added by creating new XML files.",
+        "\xE3\x83\x95\xE3\x82\xA1\xE3\x82\xA4\xE3\x83\xAB(.inp, .i, .py)\xE3\x82\x92\xE9\x96\x8B\xE3\x81\x84\xE3\x81\xA6"
+        "\xE3\x82\xB7\xE3\x83\xB3\xE3\x82\xBF\xE3\x83\x83\xE3\x82\xAF\xE3\x82\xB9\xE3\x83\x8F\xE3\x82\xA4\xE3\x83\xA9\xE3\x82\xA4"
+        "\xE3\x83\x88\xE3\x82\x92\xE7\xA2\xBA\xE8\xAA\x8D\xE3\x81\x97\xE3\x80\x81\xE3\x82\xB3\xE3\x83\xBC\xE3\x83\x89\xE3\x82\xB3"
+        "\xE3\x83\xB3\xE3\x83\x97\xE3\x83\xAA\xE3\x83\xBC\xE3\x82\xB7\xE3\x83\xA7\xE3\x83\xB3\xE3\x82\x92\xE8\x87\xAA\xE5\x8B\x95"
+        "\xE5\xAE\x8C\xE6\x88\x90\xE3\x81\x95\xE3\x81\x9B\xE3\x82\x8B\xE3\x81\x93\xE3\x81\xA8\xE3\x81\x8C\xE3\x81\xA7\xE3\x81\x8D"
+        "\xE3\x81\xBE\xE3\x81\x99\xE3\x80\x82\xE6\x96\xB0\xE3\x81\x97\xE3\x81\x84XML\xE3\x83\x95\xE3\x82\xA1\xE3\x82\xA4\xE3\x83\xAB"
+        "\xE3\x82\x92\xE4\xBD\x9C\xE6\x88\x90\xE3\x81\x99\xE3\x82\x8B\xE3\x81\x93\xE3\x81\xA8\xE3\x81\xA7\xE8\xA8\x80\xE8\xAA\x9E"
+        "\xE3\x82\x92\xE8\xBF\xBD\xE5\x8A\xA0\xE3\x81\xA7\xE3\x81\x8D\xE3\x81\xBE\xE3\x81\x99\xE3\x80\x82"
+    )
+);
+
 }
 
 void kamakura::setLightTheme()
@@ -448,4 +527,45 @@ void kamakura::setDarkTheme()
             editor->applyDarkTheme();
         }
     }
+}
+
+
+QString kamakura::trLang(const QString& en, const QString& ja) const
+{
+    return currentLanguage == Language::Japanese ? ja : en;
+}
+
+void kamakura::setLanguage(Language lang)
+{
+    currentLanguage = lang;
+
+    // Update dock and actions
+    opened_docs_dock->setWindowTitle(trLang("Opened Files", "\xE9\x96\x8B\xE3\x81\x84\xE3\x81\xA6\xE3\x81\x84\xE3\x82\x8B\xE3\x83\x95\xE3\x82\xA1\xE3\x82\xA4\xE3\x83\xAB"));
+
+    ui->menuFile->setTitle(trLang("File", "\xE3\x83\x95\xE3\x82\xA1\xE3\x82\xA4\xE3\x83\xAB"));
+    ui->menuEdit->setTitle(trLang("Edit", "\xE7\xB7\xA8\xE9\x9B\x86"));
+    ui->menuAbout->setTitle(trLang("About", "\xE6\x83\x85\xE5\xA0\xB1"));
+
+    ui->actionOpen->setText(trLang("Open", "\xE9\x96\x8B\xE3\x81\x8F"));
+    ui->actionNew->setText(trLang("New", "\xE6\x96\xB0\xE8\xA6\x8F"));
+    ui->actionQuit->setText(trLang("Quit", "\xE7\xB5\x82\xE4\xBA\x86"));
+    ui->actionSave->setText(trLang("Save As", "\xE5\x90\x8D\xE5\x89\x8D\xE3\x82\x92\xE4\xBB\x98\xE3\x81\x91\xE3\x81\xA6\xE4\xBF\x9D\xE5\xAD\x98"));
+    ui->actionSave_2->setText(trLang("Save", "\xE4\xBF\x9D\xE5\xAD\x98"));
+    ui->actionCopy->setText(trLang("Copy", "\xE3\x82\xB3\xE3\x83\x94\xE3\x83\xBC"));
+    ui->actionPaste->setText(trLang("Paste", "\xE8\xB2\xBC\xE3\x82\x8A\xE4\xBB\x98\xE3\x81\x91"));
+    ui->actionCut->setText(trLang("Cut", "\xE5\x89\xB2\xE3\x82\x8A\xE5\x8F\x96\xE3\x82\x8A"));
+    ui->actionZoom->setText(trLang("Zoom+", "\xE3\x82\xBA\xE3\x83\xBC\xE3\x83\xA0+"));
+    ui->actionZoom_2->setText(trLang("Zoom-", "\xE3\x82\xBA\xE3\x83\xBC\xE3\x83\xA0-"));
+    ui->actionSearch_and_Replace->setText(trLang("Search and Replace", "\xE6\xA4\x9C\xE7\xB4\xA2\xE7\xAD\x89\xE3\x81\xA8\xE7\xBD\xAE\xE6\x8F\x9B"));
+    ui->actionHowTo->setText(trLang("HowTo", "\xE4\xBD\xBF\xE3\x81\x84\xE6\x96\xB9"));
+    ui->actionKamakura->setText(trLang("Kamakura", "Kamakura"));
+
+    englishAction->setText(trLang("English", "\xE8\x8B\xB1\xE8\xAA\x9E"));
+    japaneseAction->setText(trLang("Japanese", "\xE6\x97\xA5\xE6\x9C\xAC\xE8\xAA\x9E"));
+    if(languageMenu)
+        languageMenu->setTitle(trLang("Language", "\xE8\xA8\x80\xE8\xAA\x9E"));
+
+    wordWrapAction->setText(trLang("Word Wrap", "\xE8\xA1\x8C\xE6\x8A\x98\xE3\x82\x8A\xE8\xBE\xBC\xE3\x81\xBF"));
+
+    metricReporter->setLanguage(lang);
 }

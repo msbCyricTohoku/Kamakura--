@@ -5,6 +5,8 @@
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QFrame>
+#include "language.h"
+
 
 //Kamakura-- Mehrdad S. Beni and Hiroshi Watabe, Japan 2023
 
@@ -14,6 +16,8 @@ class MetricReporter : public QFrame
 
 public:
     explicit MetricReporter(QWidget *parent = nullptr);
+    void setLanguage(Language lang);
+
 
 public slots:
     void updateWordCount(int wordCount);
