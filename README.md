@@ -30,9 +30,11 @@
 
 ---
 
-## 📸 Screenshot
+## 📸 Screenshots
 
-![Kamakura in Action](screenshot.png)
+![Kamakura in Action](screen.png)
+
+![Kamakura in Action2](screen2.png)
 
 ---
 
