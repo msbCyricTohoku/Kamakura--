@@ -393,6 +393,28 @@ void CodeEditor::applyDarkTheme()
     lineNumberArea->update();
 }
 
+void CodeEditor::applySolarizedLightTheme()
+{
+    setStyleSheet("background-color:#fdf6e3;color:#657b83;");
+    lineHighlightColor = QColor("#eee8d5");
+    lineNumberAreaBgColor = QColor("#eee8d5");
+    lineNumberAreaTextColor = QColor("#586e75");
+    bracketMatchColor = QColor("#b58900");
+    highlightCurrentLine();
+    lineNumberArea->update();
+}
+
+void CodeEditor::applySolarizedDarkTheme()
+{
+    setStyleSheet("background-color:#002b36;color:#839496;");
+    lineHighlightColor = QColor("#073642");
+    lineNumberAreaBgColor = QColor("#073642");
+    lineNumberAreaTextColor = QColor("#586e75");
+    bracketMatchColor = QColor("#b58900");
+    highlightCurrentLine();
+    lineNumberArea->update();
+}
+
 void CodeEditor::setWordWrap(bool enable)
 {
     wordWrapEnabled = enable;

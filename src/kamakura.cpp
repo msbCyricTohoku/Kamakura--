@@ -89,13 +89,37 @@ void kamakura::setupDocks()
 
     QAction* lightTheme = viewMenu->addAction("Light Theme");
     QAction* darkTheme = viewMenu->addAction("Dark Theme");
+    QAction* solarizedLight = viewMenu->addAction("Solarized Light Theme");
+    QAction* solarizedDark = viewMenu->addAction("Solarized Dark Theme");
 
     lightTheme->setCheckable(true);
     darkTheme->setCheckable(true);
+    solarizedLight->setCheckable(true);
+    solarizedDark->setCheckable(true);
+
+
     themeGroup->addAction(lightTheme);
     themeGroup->addAction(darkTheme);
     //darkTheme->setChecked(true);
-    lightTheme->setChecked(true);
+    //lightTheme->setChecked(true);
+
+    themeGroup->addAction(solarizedLight);
+    themeGroup->addAction(solarizedDark);
+
+    switch (currentTheme) {
+    case Theme::Dark:
+        darkTheme->setChecked(true);
+        break;
+    case Theme::SolarizedLight:
+        solarizedLight->setChecked(true);
+        break;
+    case Theme::SolarizedDark:
+        solarizedDark->setChecked(true);
+        break;
+    default:
+        lightTheme->setChecked(true);
+        break;
+    }
 
     //wordWrapAction = viewMenu->addAction(tr("Word Wrap"));
 
@@ -106,6 +130,10 @@ void kamakura::setupDocks()
 
     connect(lightTheme, &QAction::triggered, this, &kamakura::setLightTheme);
     connect(darkTheme, &QAction::triggered, this, &kamakura::setDarkTheme);
+    connect(solarizedLight, &QAction::triggered, this, &kamakura::setSolarizedLightTheme);
+    connect(solarizedDark, &QAction::triggered, this, &kamakura::setSolarizedDarkTheme);
+
+
 
    languageMenu = menuBar()->addMenu("Language");
     QActionGroup* langGroup = new QActionGroup(this);
@@ -141,10 +169,26 @@ void kamakura::setupEditor(CodeEditor* editor)
     font.setPointSize(12);
     editor->setFont(font);
 
-    if (darkThemeEnabled)
+    //if (darkThemeEnabled)
+    //    editor->applyDarkTheme();
+    //else
+    //    editor->applyLightTheme();
+
+    switch (currentTheme) {
+    case Theme::Dark:
         editor->applyDarkTheme();
-    else
+        break;
+    case Theme::SolarizedLight:
+        editor->applySolarizedLightTheme();
+        break;
+    case Theme::SolarizedDark:
+        editor->applySolarizedDarkTheme();
+        break;
+    default:
         editor->applyLightTheme();
+        break;
+    }
+
 
     editor->setWordWrap(wordWrapEnabled);
 
@@ -517,7 +561,8 @@ QMessageBox::information(
 
 void kamakura::setLightTheme()
 {
-    darkThemeEnabled = false;
+    //darkThemeEnabled = false;
+     currentTheme = Theme::Light;
     qApp->setPalette(qApp->style()->standardPalette());
     for (int i = 0; i < tabs->count(); ++i) {
         if (auto editor = qobject_cast<CodeEditor*>(tabs->widget(i))) {
@@ -553,11 +598,65 @@ void kamakura::setDarkTheme()
     darkPalette.setColor(QPalette::BrightText, Qt::red);
     darkPalette.setColor(QPalette::Highlight, QColor(142,45,197).lighter());
     darkPalette.setColor(QPalette::HighlightedText, Qt::black);
-    darkThemeEnabled = true;
+    //darkThemeEnabled = true;
+
+    currentTheme = Theme::Dark;
+
     qApp->setPalette(darkPalette);
     for (int i = 0; i < tabs->count(); ++i) {
         if (auto editor = qobject_cast<CodeEditor*>(tabs->widget(i))) {
             editor->applyDarkTheme();
+        }
+    }
+}
+
+
+void kamakura::setSolarizedLightTheme()
+{
+    qApp->setStyle("Fusion");
+    QPalette palette;
+    palette.setColor(QPalette::Window, QColor("#fdf6e3"));
+    palette.setColor(QPalette::WindowText, QColor("#657b83"));
+    palette.setColor(QPalette::Base, QColor("#eee8d5"));
+    palette.setColor(QPalette::AlternateBase, QColor("#fdf6e3"));
+    palette.setColor(QPalette::ToolTipBase, QColor("#657b83"));
+    palette.setColor(QPalette::ToolTipText, QColor("#657b83"));
+    palette.setColor(QPalette::Text, QColor("#657b83"));
+    palette.setColor(QPalette::Button, QColor("#eee8d5"));
+    palette.setColor(QPalette::ButtonText, QColor("#657b83"));
+    palette.setColor(QPalette::BrightText, QColor("#dc322f"));
+    palette.setColor(QPalette::Highlight, QColor("#b58900"));
+    palette.setColor(QPalette::HighlightedText, QColor("#fdf6e3"));
+    currentTheme = Theme::SolarizedLight;
+    qApp->setPalette(palette);
+    for (int i = 0; i < tabs->count(); ++i) {
+        if (auto editor = qobject_cast<CodeEditor*>(tabs->widget(i))) {
+            editor->applySolarizedLightTheme();
+        }
+    }
+}
+
+void kamakura::setSolarizedDarkTheme()
+{
+    qApp->setStyle("Fusion");
+    QPalette palette;
+    palette.setColor(QPalette::Window, QColor("#002b36"));
+    palette.setColor(QPalette::WindowText, QColor("#839496"));
+    palette.setColor(QPalette::Base, QColor("#073642"));
+    palette.setColor(QPalette::AlternateBase, QColor("#002b36"));
+    palette.setColor(QPalette::ToolTipBase, QColor("#839496"));
+    palette.setColor(QPalette::ToolTipText, QColor("#839496"));
+    palette.setColor(QPalette::Text, QColor("#839496"));
+    palette.setColor(QPalette::Button, QColor("#073642"));
+    palette.setColor(QPalette::ButtonText, QColor("#839496"));
+    palette.setColor(QPalette::BrightText, QColor("#dc322f"));
+    palette.setColor(QPalette::Highlight, QColor("#586e75"));
+    palette.setColor(QPalette::HighlightedText, QColor("#002b36"));
+    currentTheme = Theme::SolarizedDark;
+    qApp->setPalette(palette);
+    for (int i = 0; i < tabs->count(); ++i) {
+        if (auto editor = qobject_cast<CodeEditor*>(tabs->widget(i))) {
+            editor->applySolarizedDarkTheme();
         }
     }
 }

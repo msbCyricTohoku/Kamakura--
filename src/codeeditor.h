@@ -27,6 +27,9 @@ public:
 
     void applyLightTheme();
     void applyDarkTheme();
+    void applySolarizedLightTheme();
+    void applySolarizedDarkTheme();
+
 
      void setWordWrap(bool enable);
     bool isWordWrapEnabled() const { return wordWrapEnabled; }
