@@ -490,4 +490,24 @@ void CodeEditor::handleAskGemini()
     }
 }
 
+
+void CodeEditor::duplicateLine()
+{
+    QTextCursor cursor = textCursor();
+    QString text;
+    if (cursor.hasSelection()) {
+        text = cursor.selection().toPlainText();
+        cursor.setPosition(cursor.selectionEnd());
+    } else {
+        cursor.movePosition(QTextCursor::StartOfLine);
+        cursor.movePosition(QTextCursor::EndOfLine, QTextCursor::KeepAnchor);
+        text = cursor.selection().toPlainText();
+        cursor.clearSelection();
+        cursor.movePosition(QTextCursor::EndOfLine);
+    }
+    cursor.insertBlock();
+    cursor.insertText(text);
+    setTextCursor(cursor);
+}
+
 //Kamakura-- Mehrdad S. Beni and Hiroshi Watabe, Japan 2023

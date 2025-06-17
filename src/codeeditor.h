@@ -75,6 +75,7 @@ public slots:
     void updateMetrics();
     void handleAskChatGPT();
     void handleAskGemini();
+    void duplicateLine();
 
 private:
     QWidget *lineNumberArea;

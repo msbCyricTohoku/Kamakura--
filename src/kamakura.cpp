@@ -462,6 +462,14 @@ void kamakura::on_actionGoToLine_triggered()
 }
 
 
+void kamakura::on_actionDuplicate_Line_triggered()
+{
+    if (auto editor = currentEditor()) {
+        editor->duplicateLine();
+    }
+}
+
+
 void kamakura::on_actionKamakura_triggered()
 {
     //QMessageBox::about(this, "About Kamakura",
@@ -579,6 +587,7 @@ void kamakura::setLanguage(Language lang)
     ui->actionCopy->setText(trLang("Copy", "\xE3\x82\xB3\xE3\x83\x94\xE3\x83\xBC"));
     ui->actionPaste->setText(trLang("Paste", "\xE8\xB2\xBC\xE3\x82\x8A\xE4\xBB\x98\xE3\x81\x91"));
     ui->actionCut->setText(trLang("Cut", "\xE5\x89\xB2\xE3\x82\x8A\xE5\x8F\x96\xE3\x82\x8A"));
+    ui->actionDuplicate_Line->setText(trLang("Duplicate Line", "\xE8\xA1\x8C\xE3\x82\x92\xE8\xA4\x87\xE8\xA3\xBD"));
     ui->actionZoom->setText(trLang("Zoom+", "\xE3\x82\xBA\xE3\x83\xBC\xE3\x83\xA0+"));
     ui->actionZoom_2->setText(trLang("Zoom-", "\xE3\x82\xBA\xE3\x83\xBC\xE3\x83\xA0-"));
     ui->actionSearch_and_Replace->setText(trLang("Search and Replace", "\xE6\xA4\x9C\xE7\xB4\xA2\xE7\xAD\x89\xE3\x81\xA8\xE7\xBD\xAE\xE6\x8F\x9B"));

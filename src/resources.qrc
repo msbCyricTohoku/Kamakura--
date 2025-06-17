@@ -24,5 +24,6 @@
         <file>resources/fortran_lang.xml</file>
         <file>resources/web_lang.xml</file>
         <file>resources/goto.png</file>
+        <file>resources/dup.png</file>
     </qresource>
 </RCC>
