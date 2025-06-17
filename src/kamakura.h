@@ -50,6 +50,7 @@ private slots:
     void on_actionZoom_triggered();
     void on_actionZoom_2_triggered();
     void on_actionSearch_and_Replace_triggered();
+    void on_actionGoToLine_triggered();
     void on_actionKamakura_triggered();
     void on_actionHowTo_triggered();
 

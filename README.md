@@ -67,6 +67,9 @@
 
 * **ChatGPT and Gemini integration**
   Use ChatGPT or Gemini LLM within Kamakura using your API key.
+
+* **Go to Line Shortcut**
+  Jump directly to any line using `Ctrl+G`.
 ---
 
 ## 📦 Installation

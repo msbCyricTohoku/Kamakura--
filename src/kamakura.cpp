@@ -18,6 +18,7 @@
 #include <QDebug>
 #include <QStringListModel>
 #include <QCoreApplication>
+#include <QInputDialog>
 
 //Kamakura-- Mehrdad S. Beni and Hiroshi Watabe, Japan 2023
 
@@ -436,6 +437,30 @@ void kamakura::on_actionSearch_and_Replace_triggered()
     findDialog->show();
     findDialog->activateWindow();
 }
+
+
+void kamakura::on_actionGoToLine_triggered()
+{
+    CodeEditor* editor = currentEditor();
+    if (!editor) return;
+
+    bool ok = false;
+    int maxLine = editor->document()->blockCount();
+    int current = editor->textCursor().blockNumber() + 1;
+    int line = QInputDialog::getInt(this,
+                                    trLang("Go to Line", "\xE8\xA1\x8C\xE3\x81\xB8\xE7\xA7\xBB\xE5\x8B\x95"),
+                                    trLang("Line number:", "\xE8\xA1\x8C\xE7\x95\xAA\xE5\x8F\xB7:"),
+                                    current, 1, maxLine, 1, &ok);
+    if (ok) {
+        QTextBlock block = editor->document()->findBlockByNumber(line - 1);
+        if (block.isValid()) {
+            QTextCursor cursor(block);
+            editor->setTextCursor(cursor);
+            editor->centerCursor();
+        }
+    }
+}
+
 
 void kamakura::on_actionKamakura_triggered()
 {
