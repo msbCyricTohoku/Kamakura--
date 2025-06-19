@@ -6,7 +6,9 @@
 #include <QTextBlock>
 #include <QPaintEvent>
 #include <QResizeEvent>
-#include <QPlainTextEdit>
+#include <QTextEdit>
+#include <QFileDialog>
+#include <QUuid>
 #include <QFont>
 #include <QTextFormat>
 #include <QTextCursor>
@@ -19,7 +21,7 @@
 #include "airequester.h"
 
 //Kamakura-- Mehrdad S. Beni and Hiroshi Watabe, Japan 2023
-class CodeEditor : public QPlainTextEdit {
+class CodeEditor : public QTextEdit {
     Q_OBJECT
 
 public:
@@ -81,6 +83,7 @@ public slots:
     void handleAskChatGPT();
     void handleAskGemini();
     void duplicateLine();
+    void insertImage();
 
 private:
     QWidget *lineNumberArea;

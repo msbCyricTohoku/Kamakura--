@@ -15,10 +15,14 @@
 #include <QAction>
 #include <QContextMenuEvent>
 #include <QInputDialog>
+#include <QScrollBar>
+#include <QUrl>
+#include <QImage>
+#include <QTextImageFormat>
 
 //Kamakura-- Mehrdad S. Beni and Hiroshi Watabe, Japan 2023
 
-CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
+CodeEditor::CodeEditor(QWidget *parent) : QTextEdit(parent)
 {
     lineNumberArea = new LineNumberArea(this);
     aiRequester = new AIRequester(this);
@@ -26,7 +30,7 @@ CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
     lineNumberArea->setVisible(showLineNumbers);
     updateLineNumberAreaWidth(0);
 
-    setLineWrapMode(QPlainTextEdit::WidgetWidth);
+    setLineWrapMode(QTextEdit::WidgetWidth);
     
     wordWrapEnabled = true;
 
@@ -34,11 +38,16 @@ CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
 
     //applyLightTheme();
 
-    connect(this, &CodeEditor::blockCountChanged, this, &CodeEditor::updateLineNumberAreaWidth);
-    connect(this, &CodeEditor::updateRequest, this, &CodeEditor::updateLineNumberArea);
-    connect(this, &CodeEditor::cursorPositionChanged, this, &CodeEditor::highlightCurrentLine);
-    connect(this, &QPlainTextEdit::textChanged, this, &CodeEditor::handleTextChanged);
-    connect(this, &QPlainTextEdit::cursorPositionChanged, this, &CodeEditor::handleCursorPositionChanged);
+    connect(document(), &QTextDocument::blockCountChanged,
+            this, &CodeEditor::updateLineNumberAreaWidth);
+    connect(verticalScrollBar(), &QScrollBar::valueChanged,
+            this, [this](int){ updateLineNumberArea(viewport()->rect(), 0); });
+    connect(this, &QTextEdit::cursorPositionChanged,
+            this, &CodeEditor::highlightCurrentLine);
+    connect(this, &QTextEdit::textChanged,
+            this, &CodeEditor::handleTextChanged);
+    connect(this, &QTextEdit::cursorPositionChanged,
+            this, &CodeEditor::handleCursorPositionChanged);
 
     updateLineNumberAreaWidth(0);
     highlightCurrentLine();
@@ -49,7 +58,7 @@ CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
 int CodeEditor::lineNumberAreaWidth()
 {
     int digits = 1;
-    int max = qMax(1, blockCount());
+    int max = qMax(1, document()->blockCount());
     while (max >= 10) {
         max /= 10;
         ++digits;
@@ -85,7 +94,7 @@ void CodeEditor::updateLineNumberArea(const QRect &rect, int dy)
 
 void CodeEditor::resizeEvent(QResizeEvent *e)
 {
-    QPlainTextEdit::resizeEvent(e);
+    QTextEdit::resizeEvent(e);
 
     QRect cr = contentsRect();
     //lineNumberArea->setGeometry(QRect(cr.left(), cr.top(), lineNumberAreaWidth(), cr.height()));
@@ -113,7 +122,7 @@ void CodeEditor::keyPressEvent(QKeyEvent *event)
         else if (ch == '"') closing = '"';
         else if (ch == '\'') closing = '\'';
         if (!closing.isNull()) {
-            QPlainTextEdit::keyPressEvent(event);
+            QTextEdit::keyPressEvent(event);
             insertPlainText(QString(closing));
             QTextCursor c = textCursor();
             c.movePosition(QTextCursor::Left);
@@ -122,12 +131,14 @@ void CodeEditor::keyPressEvent(QKeyEvent *event)
         }
     }
 
-    QPlainTextEdit::keyPressEvent(event);
+    QTextEdit::keyPressEvent(event);
 }
 
 void CodeEditor::contextMenuEvent(QContextMenuEvent *event)
 {
     QMenu *menu = createStandardContextMenu();
+    QAction *imgAct = menu->addAction(tr("Insert Image..."));
+    connect(imgAct, &QAction::triggered, this, &CodeEditor::insertImage);
     if (textCursor().hasSelection()) {
         QMenu *aiMenu = menu->addMenu(tr("Ask AI"));
         QAction *chatAct = aiMenu->addAction(tr("Ask ChatGPT"));
@@ -263,12 +274,12 @@ bool CodeEditor::find(QString query, bool caseSensitive, bool wholeWords)
 
     QTextDocument::FindFlags searchOptions = getSearchOptionsFromFlags(caseSensitive, wholeWords);
 
-    bool matchFound = QPlainTextEdit::find(query, searchOptions);
+    bool matchFound = QTextEdit::find(query, searchOptions);
 
     if (!matchFound)
     {
         moveCursor(QTextCursor::Start);
-        matchFound = QPlainTextEdit::find(query, searchOptions);
+        matchFound = QTextEdit::find(query, searchOptions);
     }
     if (matchFound)
     {
@@ -292,12 +303,12 @@ bool CodeEditor::findBackward(QString query, bool caseSensitive, bool wholeWords
     QTextDocument::FindFlags searchOptions = getSearchOptionsFromFlags(caseSensitive, wholeWords);
     searchOptions |= QTextDocument::FindBackward;
 
-    bool matchFound = QPlainTextEdit::find(query, searchOptions);
+    bool matchFound = QTextEdit::find(query, searchOptions);
 
     if (!matchFound)
     {
         moveCursor(QTextCursor::End);
-        matchFound = QPlainTextEdit::find(query, searchOptions);
+        matchFound = QTextEdit::find(query, searchOptions);
     }
     if (!matchFound)
     {
@@ -329,7 +340,7 @@ void CodeEditor::replaceAll(QString what, QString with, bool caseSensitive, bool
     moveCursorTo(0);
 
     QTextDocument::FindFlags searchOptions = getSearchOptionsFromFlags(caseSensitive, wholeWords);
-    bool found = QPlainTextEdit::find(what, searchOptions);
+    bool found = QTextEdit::find(what, searchOptions);
     int replacements = 0;
 
     QTextCursor cursor(document());
@@ -339,7 +350,7 @@ void CodeEditor::replaceAll(QString what, QString with, bool caseSensitive, bool
         QTextCursor currentPosition = textCursor();
         currentPosition.insertText(with);
         replacements++;
-        found = QPlainTextEdit::find(what, searchOptions);
+        found = QTextEdit::find(what, searchOptions);
     }
     cursor.endEditBlock();
 
@@ -389,7 +400,7 @@ void CodeEditor::handleTextChanged()
     QString text = toPlainText();
     metrics.wordCount = text.split(QRegularExpression("\\b\\w+\\b"), Qt::SkipEmptyParts).size();
     metrics.charCount = text.length();
-    metrics.totalLines = blockCount();
+    metrics.totalLines = document()->blockCount();
     emit wordCountChanged(metrics.wordCount);
     emit charCountChanged(metrics.charCount);
     emit lineChanged(metrics.currentLine, metrics.totalLines);
@@ -400,7 +411,7 @@ void CodeEditor::handleCursorPositionChanged()
     QTextCursor c = textCursor();
     metrics.currentLine = c.blockNumber() + 1;
     metrics.currentColumn = c.position() - c.block().position() + 1;
-    metrics.totalLines = blockCount();
+    metrics.totalLines = document()->blockCount();
     emit lineChanged(metrics.currentLine, metrics.totalLines);
     emit columnChanged(metrics.currentColumn);
 }
@@ -460,7 +471,7 @@ void CodeEditor::applySolarizedDarkTheme()
 void CodeEditor::setWordWrap(bool enable)
 {
     wordWrapEnabled = enable;
-    setLineWrapMode(enable ? QPlainTextEdit::WidgetWidth : QPlainTextEdit::NoWrap);
+    setLineWrapMode(enable ? QTextEdit::WidgetWidth : QTextEdit::NoWrap);
 }
 
 
@@ -581,6 +592,27 @@ void CodeEditor::duplicateLine()
     cursor.insertBlock();
     cursor.insertText(text);
     setTextCursor(cursor);
+}
+
+void CodeEditor::insertImage()
+{
+    QString filePath = QFileDialog::getOpenFileName(this, tr("Insert Image"), QString(),
+                                                   tr("Images (*.png *.jpg *.jpeg *.bmp *.gif *.eps)"));
+    if (filePath.isEmpty())
+        return;
+
+    QImage img(filePath);
+    if (img.isNull()) {
+        QMessageBox::warning(this, tr("Error"), tr("Unable to load image."));
+        return;
+    }
+
+    QUrl url(QString("image://%1").arg(QUuid::createUuid().toString()));
+    document()->addResource(QTextDocument::ImageResource, url, img);
+    QTextImageFormat format;
+    format.setName(url.toString());
+
+    textCursor().insertImage(format);
 }
 
 //Kamakura-- Mehrdad S. Beni and Hiroshi Watabe, Japan 2023

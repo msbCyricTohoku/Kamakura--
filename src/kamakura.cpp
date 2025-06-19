@@ -200,7 +200,7 @@ void kamakura::setupEditor(CodeEditor* editor)
 
     editor->setLineNumbersVisible(lineNumbersEnabled);
 
-    connect(editor, &QPlainTextEdit::modificationChanged, this, &kamakura::updateTabDirtyStatus);
+    connect(editor, &QTextEdit::modificationChanged, this, &kamakura::updateTabDirtyStatus);
 }
 
 CodeEditor* kamakura::currentEditor()
