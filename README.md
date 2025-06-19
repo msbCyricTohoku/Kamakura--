@@ -30,7 +30,7 @@
 
 ## 🎬 Video Clip
 
-![Kamakura Animation](kamakura.gif)
+![Kamakura Animation](kamakurav4.gif)
 
 ---
 
