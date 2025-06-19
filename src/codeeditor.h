@@ -82,6 +82,7 @@ public slots:
     void handleAskGemini();
     void duplicateLine();
     void toggleComment();
+    void insertDateTime();
     void setCommentPrefix(const QString& prefix);
 
 private:

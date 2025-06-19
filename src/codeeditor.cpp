@@ -15,6 +15,8 @@
 #include <QAction>
 #include <QContextMenuEvent>
 #include <QInputDialog>
+#include <QDateTime>
+
 
 
 //Kamakura-- Mehrdad S. Beni and Hiroshi Watabe, Japan 2023
@@ -562,6 +564,13 @@ void CodeEditor::handleAskGemini()
         c.setPosition(c.selectionEnd());
         c.insertText("\n" + response + "\n");
     }
+}
+
+
+void CodeEditor::insertDateTime()
+{
+    QString dt = QDateTime::currentDateTime().toString(Qt::ISODate);
+    textCursor().insertText(dt);
 }
 
 

@@ -95,6 +95,7 @@
     <addaction name="actionZoom_2"/>
     <addaction name="actionSearch_and_Replace"/>
     <addaction name="actionGoToLine"/>
+    <addaction name="actionInsert_DateTime"/>
    </widget>
    <widget class="QMenu" name="menuAbout">
     <property name="font">
@@ -149,6 +150,7 @@
    <addaction name="separator"/>
    <addaction name="actionSearch_and_Replace"/>
    <addaction name="actionGoToLine"/>
+   <addaction name="actionInsert_DateTime"/>
    <addaction name="separator"/>
    <addaction name="actionHowTo"/>
    <addaction name="actionKamakura"/>
@@ -423,6 +425,18 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+/</string>
+   </property>
+  </action>
+  <action name="actionInsert_DateTime">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/new/prefix1/resources/date.png</normaloff>:/new/prefix1/resources/date.png</iconset>
+   </property>
+   <property name="text">
+    <string>Insert Date/Time</string>
+   </property>
+   <property name="shortcut">
+    <string>F5</string>
    </property>
   </action>
   <action name="actionHowTo">

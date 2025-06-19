@@ -26,5 +26,6 @@
         <file>resources/goto.png</file>
         <file>resources/dup.png</file>
         <file>resources/comment.png</file>
+        <file>resources/date.png</file>
     </qresource>
 </RCC>

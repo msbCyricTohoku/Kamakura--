@@ -555,6 +555,14 @@ void kamakura::on_actionToggle_Comment_triggered()
 }
 
 
+void kamakura::on_actionInsert_DateTime_triggered()
+{
+    if (auto editor = currentEditor()) {
+        editor->insertDateTime();
+    }
+}
+
+
 void kamakura::on_actionKamakura_triggered()
 {
     //QMessageBox::about(this, "About Kamakura",

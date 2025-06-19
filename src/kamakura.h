@@ -63,6 +63,7 @@ private slots:
     void on_actionGoToLine_triggered();
     void on_actionDuplicate_Line_triggered();
     void on_actionToggle_Comment_triggered();
+    void on_actionInsert_DateTime_triggered();
     void on_actionKamakura_triggered();
     void on_actionHowTo_triggered();
 
@@ -122,7 +123,7 @@ private:
     void updateRecentFilesMenu();
     void loadRecentFiles();
     void saveRecentFiles();
-    
+
 
     void setupEditor(CodeEditor* editor);
     void setupDocks();
