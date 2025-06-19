@@ -7,9 +7,7 @@
 
 ---
 
-🎉 **Kamakura––** is your no-fuss, no-bloat Qt editor for PHITS input files. Type, tweak, and run your `.i`/`.inp` scripts (and more!) in style—no rocket science required!
-
----
+🎉 **Kamakura––** is your no-fuss code editor for PHITS scripting and programming.
 
 ## 🚀 Quick Start
 
@@ -53,8 +51,8 @@
 * **Save / Save As**
   Keep your work safe with one click.
 
-* **Dark Theme (Optional)**
-  Give your eyes a break with a sleek, modern look.
+* **Theme Selection**
+  Choose Light, Dark, or Solarized (Light/Dark) styles.
 
 * **Tab key Indentation**
   Now you can use tab key to do code indentation.
@@ -70,6 +68,24 @@
 
 * **Go to Line Shortcut**
   Jump directly to any line using `Ctrl+G`.
+
+* **Line Number Toggle**
+  Show or hide line numbers from the View menu.
+
+* **Auto-Closing Brackets**
+  Automatically inserts closing brackets and quotes.
+
+* **Duplicate Line**
+  Quickly duplicate the current line or selection with `Ctrl+D`.
+
+* **Toggle Comment**
+  Comment or uncomment lines with `Ctrl+/`.
+
+* **Insert Date/Time**
+  Insert the current date and time using `F5`.
+
+* **Recent Files Menu**
+  Reopen recently opened files in one click.
 ---
 
 ## 📦 Installation
