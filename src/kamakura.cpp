@@ -575,7 +575,7 @@ QMessageBox::about(
     trLang("About Kamakura", "Kamakura\xE3\x81\xAB\xE3\x81\xA4\xE3\x81\x84\xE3\x81\xA6"),
     trLang(
         "<p><b>Kamakura Code Editor</b></p>"
-        "<p>Version 3.0</p>"
+        "<p>Version 4.0</p>"
         "<p>A lightweight, extensible code editor.</p>"
         "<p>By Mehrdad S. Beni & Hiroshi Watabe, 2025.</p>",
         "<p><b>Kamakura\xE3\x82\xB3\xE3\x83\xBC\xE3\x83\x89\xE3\x82\xA8\xE3\x83\x87\xE3\x82\xA3\xE3\x82\xBF</b></p>"
