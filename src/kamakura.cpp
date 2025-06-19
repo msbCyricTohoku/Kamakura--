@@ -395,6 +395,17 @@ void kamakura::onCurrentTabChanged(int index)
     highlighter->setExtension(fileInfo.suffix());
     highlighter->rehighlight();
 
+
+    QString ext = fileInfo.suffix().toLower();
+    QString prefix = "#";
+    if (ext == "c" || ext == "cpp" || ext == "h" || ext == "hpp" || ext == "rs" || ext == "js")
+        prefix = "//";
+    else if (ext == "hs")
+        prefix = "--";
+    else if (ext == "f90" || ext == "f95" || ext == "f")
+        prefix = "!";
+    editor->setCommentPrefix(prefix);
+
     
     disconnect(findDialog, &FindDialog::startFinding, nullptr, nullptr);
     disconnect(findDialog, &FindDialog::startFindingBackward, nullptr, nullptr);
@@ -518,6 +529,14 @@ void kamakura::on_actionDuplicate_Line_triggered()
 {
     if (auto editor = currentEditor()) {
         editor->duplicateLine();
+    }
+}
+
+
+void kamakura::on_actionToggle_Comment_triggered()
+{
+    if (auto editor = currentEditor()) {
+        editor->toggleComment();
     }
 }
 

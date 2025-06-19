@@ -16,6 +16,7 @@
 #include <QContextMenuEvent>
 #include <QInputDialog>
 
+
 //Kamakura-- Mehrdad S. Beni and Hiroshi Watabe, Japan 2023
 
 CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
@@ -582,5 +583,44 @@ void CodeEditor::duplicateLine()
     cursor.insertText(text);
     setTextCursor(cursor);
 }
+
+void CodeEditor::toggleComment()
+{
+    QTextCursor cursor = textCursor();
+    int start = cursor.selectionStart();
+    int end = cursor.selectionEnd();
+
+    QTextBlock startBlock = document()->findBlock(start);
+    QTextBlock endBlock = document()->findBlock(end == start ? start : end - 1);
+
+    cursor.beginEditBlock();
+    for (QTextBlock block = startBlock; block.isValid(); block = block.next()) {
+        QTextCursor lineCursor(block);
+        QString text = block.text();
+
+        int firstNonSpace = 0;
+        while (firstNonSpace < text.length() && text.at(firstNonSpace).isSpace())
+            ++firstNonSpace;
+
+        bool commented = text.mid(firstNonSpace, commentPrefix.length()) == commentPrefix;
+        lineCursor.setPosition(block.position() + firstNonSpace);
+        if (commented) {
+            lineCursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor, commentPrefix.length());
+            lineCursor.removeSelectedText();
+        } else {
+            lineCursor.insertText(commentPrefix);
+        }
+        if (block == endBlock)
+            break;
+    }
+    cursor.endEditBlock();
+}
+
+void CodeEditor::setCommentPrefix(const QString& prefix)
+{
+    commentPrefix = prefix;
+}
+
+
 
 //Kamakura-- Mehrdad S. Beni and Hiroshi Watabe, Japan 2023

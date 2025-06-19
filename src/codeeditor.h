@@ -81,6 +81,8 @@ public slots:
     void handleAskChatGPT();
     void handleAskGemini();
     void duplicateLine();
+    void toggleComment();
+    void setCommentPrefix(const QString& prefix);
 
 private:
     QWidget *lineNumberArea;
@@ -93,6 +95,8 @@ private:
      QColor bracketMatchColor;
 
      AIRequester* aiRequester{nullptr};
+
+     QString commentPrefix{"#"};
     
      bool wordWrapEnabled{true};
      bool showLineNumbers{true};

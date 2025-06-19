@@ -90,6 +90,7 @@
     <addaction name="actionPaste"/>
     <addaction name="actionCut"/>
     <addaction name="actionDuplicate_Line"/>
+    <addaction name="actionToggle_Comment"/>
     <addaction name="actionZoom"/>
     <addaction name="actionZoom_2"/>
     <addaction name="actionSearch_and_Replace"/>
@@ -404,6 +405,24 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+D</string>
+   </property>
+  </action>
+  <action name="actionToggle_Comment">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/new/prefix1/resources/comment.png</normaloff>:/new/prefix1/resources/comment.png</iconset>
+   </property>
+   <property name="text">
+    <string>Toggle Comment</string>
+   </property>
+   <property name="font">
+    <font>
+     <family>TeX Gyre Adventor</family>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+/</string>
    </property>
   </action>
   <action name="actionHowTo">

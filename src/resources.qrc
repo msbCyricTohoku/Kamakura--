@@ -25,5 +25,6 @@
         <file>resources/web_lang.xml</file>
         <file>resources/goto.png</file>
         <file>resources/dup.png</file>
+        <file>resources/comment.png</file>
     </qresource>
 </RCC>
