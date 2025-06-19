@@ -38,6 +38,8 @@ public:
 
     void lineNumberAreaPaintEvent(QPaintEvent *event);
     int lineNumberAreaWidth();
+    void setLineNumbersVisible(bool visible);
+    bool lineNumbersVisible() const { return showLineNumbers; }
     inline bool isUnsaved() const { return document()->isModified(); }
 
         const static int NUM_CHARS_FOR_TAB = 5;
@@ -93,6 +95,7 @@ private:
      AIRequester* aiRequester{nullptr};
     
      bool wordWrapEnabled{true};
+     bool showLineNumbers{true};
 
 };
 

@@ -71,6 +71,7 @@ private slots:
 
 
     void toggleWordWrap(bool enabled);
+    void toggleLineNumbers(bool enabled);
     void setLanguage(Language lang);
 
     // Internal Logic Slots
@@ -96,8 +97,10 @@ private:
 
     Theme currentTheme{Theme::Light};
     bool wordWrapEnabled{true};
+     bool lineNumbersEnabled{true};
 
     QAction* wordWrapAction{nullptr};
+    QAction* lineNumbersAction{nullptr};
     
     QAction* englishAction{nullptr};
     QAction* japaneseAction{nullptr};

@@ -125,8 +125,13 @@ void kamakura::setupDocks()
 
     wordWrapAction = viewMenu->addAction("Word Wrap");
 
+    lineNumbersAction = viewMenu->addAction("Show Line Numbers");
+
     wordWrapAction->setCheckable(true);
     wordWrapAction->setChecked(wordWrapEnabled);
+
+    lineNumbersAction->setCheckable(true);
+    lineNumbersAction->setChecked(lineNumbersEnabled);
 
     connect(lightTheme, &QAction::triggered, this, &kamakura::setLightTheme);
     connect(darkTheme, &QAction::triggered, this, &kamakura::setDarkTheme);
@@ -158,6 +163,7 @@ void kamakura::setupConnections()
     connect(opened_docs_widget, &QListWidget::itemClicked, this, &kamakura::syncTabSelectionWithList);
 
     connect(wordWrapAction, &QAction::toggled, this, &kamakura::toggleWordWrap);
+    connect(lineNumbersAction, &QAction::toggled, this, &kamakura::toggleLineNumbers);
 }
 
 void kamakura::setupEditor(CodeEditor* editor)
@@ -191,6 +197,8 @@ void kamakura::setupEditor(CodeEditor* editor)
 
 
     editor->setWordWrap(wordWrapEnabled);
+
+    editor->setLineNumbersVisible(lineNumbersEnabled);
 
     connect(editor, &QPlainTextEdit::modificationChanged, this, &kamakura::updateTabDirtyStatus);
 }
@@ -582,6 +590,17 @@ void kamakura::toggleWordWrap(bool enabled)
 }
 
 
+void kamakura::toggleLineNumbers(bool enabled)
+{
+    lineNumbersEnabled = enabled;
+    for (int i = 0; i < tabs->count(); ++i) {
+        if (auto editor = qobject_cast<CodeEditor*>(tabs->widget(i))) {
+            editor->setLineNumbersVisible(enabled);
+        }
+    }
+}
+
+
 void kamakura::setDarkTheme()
 {
     qApp->setStyle("Fusion");
@@ -699,6 +718,8 @@ void kamakura::setLanguage(Language lang)
         languageMenu->setTitle(trLang("Language", "\xE8\xA8\x80\xE8\xAA\x9E"));
 
     wordWrapAction->setText(trLang("Word Wrap", "\xE8\xA1\x8C\xE6\x8A\x98\xE3\x82\x8A\xE8\xBE\xBC\xE3\x81\xBF"));
+    if(lineNumbersAction)
+        lineNumbersAction->setText(trLang("Show Line Numbers", "\xE8\xA1\x8C\xE7\x95\xAA\xE5\x8F\xB7\xE3\x82\x92\xE8\xA1\xA8\xE7\xA4\xBA"));
 
     metricReporter->setLanguage(lang);
 }
