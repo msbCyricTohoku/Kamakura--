@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 #include <QList>
+#include <QStringList>
+#include <QMenu>
 #include "language.h"
 
 // Forward Declarations
@@ -111,6 +113,16 @@ private:
     QListWidget* opened_docs_widget;
 
     Language currentLanguage{Language::English};
+
+        static constexpr int MaxRecentFiles = 5;
+    QStringList recentFiles;
+    QMenu* recentFilesMenu{nullptr};
+
+    void addRecentFile(const QString& path);
+    void updateRecentFilesMenu();
+    void loadRecentFiles();
+    void saveRecentFiles();
+    
 
     void setupEditor(CodeEditor* editor);
     void setupDocks();

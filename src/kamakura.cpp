@@ -19,6 +19,8 @@
 #include <QStringListModel>
 #include <QCoreApplication>
 #include <QInputDialog>
+#include <QSettings>
+#include <QStringList>
 
 //Kamakura-- Mehrdad S. Beni and Hiroshi Watabe, Japan 2023
 
@@ -51,6 +53,12 @@ kamakura::kamakura(QWidget *parent)
 
     setupDocks();
     setupConnections();
+    
+    //for last opened files
+    recentFilesMenu = new QMenu(tr("Recent Files"), this);
+    ui->menuFile->addMenu(recentFilesMenu);
+    loadRecentFiles();
+    updateRecentFilesMenu();
 
     //setDarkTheme();
 
@@ -224,6 +232,8 @@ void kamakura::on_actionNew_triggered()
 
     // Ensure highlighter is set even if the currentChanged signal isn't emitted
     onCurrentTabChanged(index);
+
+    
 }
 
 void kamakura::on_actionOpen_triggered()
@@ -280,6 +290,8 @@ void kamakura::openFileByPath(const QString& path)
 
     // Explicitly update highlighter in case currentChanged is not emitted
     onCurrentTabChanged(index);
+
+    addRecentFile(path);
 }
 
 void kamakura::on_actionSave_triggered()
@@ -302,6 +314,8 @@ void kamakura::on_actionSave_triggered()
     tabs->setTabText(tabs->currentIndex(), fileInfo.fileName());
     opened_docs_widget->item(tabs->currentIndex())->setText(fileInfo.fileName());
     onCurrentTabChanged(tabs->currentIndex());
+
+    addRecentFile(filePath);
 }
 
 void kamakura::on_actionSave_2_triggered()
@@ -741,6 +755,45 @@ void kamakura::setLanguage(Language lang)
         lineNumbersAction->setText(trLang("Show Line Numbers", "\xE8\xA1\x8C\xE7\x95\xAA\xE5\x8F\xB7\xE3\x82\x92\xE8\xA1\xA8\xE7\xA4\xBA"));
 
     metricReporter->setLanguage(lang);
+}
+
+
+void kamakura::addRecentFile(const QString& path)
+{
+    QString absPath = QFileInfo(path).absoluteFilePath();
+    recentFiles.removeAll(absPath);
+    recentFiles.prepend(absPath);
+    while (recentFiles.size() > MaxRecentFiles)
+        recentFiles.removeLast();
+    updateRecentFilesMenu();
+    saveRecentFiles();
+}
+
+void kamakura::updateRecentFilesMenu()
+{
+    if (!recentFilesMenu)
+        return;
+    recentFilesMenu->clear();
+    for (const QString& path : recentFiles) {
+        QAction* act = recentFilesMenu->addAction(QFileInfo(path).fileName());
+        act->setToolTip(path);
+        connect(act, &QAction::triggered, this, [this, path]() {
+            openFileByPath(path);
+        });
+    }
+    recentFilesMenu->setEnabled(!recentFiles.isEmpty());
+}
+
+void kamakura::loadRecentFiles()
+{
+    QSettings settings("Kamakura", "Kamakura");
+    recentFiles = settings.value("recentFiles").toStringList();
+}
+
+void kamakura::saveRecentFiles()
+{
+    QSettings settings("Kamakura", "Kamakura");
+    settings.setValue("recentFiles", recentFiles);
 }
 
 //Kamakura-- Mehrdad S. Beni and Hiroshi Watabe, Japan 2023
