@@ -27,6 +27,9 @@ public:
 
     void applyLightTheme();
     void applyDarkTheme();
+    void applySolarizedLightTheme();
+    void applySolarizedDarkTheme();
+
 
      void setWordWrap(bool enable);
     bool isWordWrapEnabled() const { return wordWrapEnabled; }
@@ -35,6 +38,8 @@ public:
 
     void lineNumberAreaPaintEvent(QPaintEvent *event);
     int lineNumberAreaWidth();
+    void setLineNumbersVisible(bool visible);
+    bool lineNumbersVisible() const { return showLineNumbers; }
     inline bool isUnsaved() const { return document()->isModified(); }
 
         const static int NUM_CHARS_FOR_TAB = 5;
@@ -75,6 +80,7 @@ public slots:
     void updateMetrics();
     void handleAskChatGPT();
     void handleAskGemini();
+    void duplicateLine();
 
 private:
     QWidget *lineNumberArea;
@@ -89,6 +95,7 @@ private:
      AIRequester* aiRequester{nullptr};
     
      bool wordWrapEnabled{true};
+     bool showLineNumbers{true};
 
 };
 

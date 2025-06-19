@@ -23,6 +23,14 @@ class QDropEvent;
 class QAction;
 
 
+enum class Theme {
+    Light,
+    Dark,
+    SolarizedLight,
+    SolarizedDark
+};
+
+
 //Kamakura-- Mehrdad S. Beni and Hiroshi Watabe, Japan 2023
 
 class kamakura : public QMainWindow
@@ -50,12 +58,20 @@ private slots:
     void on_actionZoom_triggered();
     void on_actionZoom_2_triggered();
     void on_actionSearch_and_Replace_triggered();
+    void on_actionGoToLine_triggered();
+    void on_actionDuplicate_Line_triggered();
     void on_actionKamakura_triggered();
     void on_actionHowTo_triggered();
 
     void setLightTheme();
     void setDarkTheme();
+    void setSolarizedLightTheme();
+    void setSolarizedDarkTheme();
+
+
+
     void toggleWordWrap(bool enabled);
+    void toggleLineNumbers(bool enabled);
     void setLanguage(Language lang);
 
     // Internal Logic Slots
@@ -76,9 +92,15 @@ private:
     MetricReporter *metricReporter;
 
     //bool darkThemeEnabled{true};
-    bool darkThemeEnabled{false};
-        bool wordWrapEnabled{true};
+    //bool darkThemeEnabled{false};
+    //    bool wordWrapEnabled{true};
+
+    Theme currentTheme{Theme::Light};
+    bool wordWrapEnabled{true};
+     bool lineNumbersEnabled{true};
+
     QAction* wordWrapAction{nullptr};
+    QAction* lineNumbersAction{nullptr};
     
     QAction* englishAction{nullptr};
     QAction* japaneseAction{nullptr};

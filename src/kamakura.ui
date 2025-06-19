@@ -51,13 +51,13 @@
      <x>0</x>
      <y>0</y>
      <width>748</width>
-     <height>23</height>
+     <height>22</height>
     </rect>
    </property>
    <property name="font">
     <font>
      <family>TeX Gyre Adventor</family>
-    <pointsize>10</pointsize>
+     <pointsize>10</pointsize>
     </font>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -89,9 +89,11 @@
     <addaction name="actionCopy"/>
     <addaction name="actionPaste"/>
     <addaction name="actionCut"/>
+    <addaction name="actionDuplicate_Line"/>
     <addaction name="actionZoom"/>
     <addaction name="actionZoom_2"/>
     <addaction name="actionSearch_and_Replace"/>
+    <addaction name="actionGoToLine"/>
    </widget>
    <widget class="QMenu" name="menuAbout">
     <property name="font">
@@ -145,6 +147,7 @@
    <addaction name="actionZoom_2"/>
    <addaction name="separator"/>
    <addaction name="actionSearch_and_Replace"/>
+   <addaction name="actionGoToLine"/>
    <addaction name="separator"/>
    <addaction name="actionHowTo"/>
    <addaction name="actionKamakura"/>
@@ -365,6 +368,42 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+F</string>
+   </property>
+  </action>
+  <action name="actionGoToLine">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/new/prefix1/resources/goto.png</normaloff>:/new/prefix1/resources/goto.png</iconset>
+   </property>
+   <property name="text">
+    <string>Go to Line</string>
+   </property>
+   <property name="font">
+    <font>
+     <family>TeX Gyre Adventor</family>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+G</string>
+   </property>
+  </action>
+  <action name="actionDuplicate_Line">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/new/prefix1/resources/dup.png</normaloff>:/new/prefix1/resources/dup.png</iconset>
+   </property>
+   <property name="text">
+    <string>Duplicate Line</string>
+   </property>
+   <property name="font">
+    <font>
+     <family>TeX Gyre Adventor</family>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+D</string>
    </property>
   </action>
   <action name="actionHowTo">

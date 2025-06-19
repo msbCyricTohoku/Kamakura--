@@ -23,6 +23,9 @@ CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
     lineNumberArea = new LineNumberArea(this);
     aiRequester = new AIRequester(this);
 
+    lineNumberArea->setVisible(showLineNumbers);
+    updateLineNumberAreaWidth(0);
+
     setLineWrapMode(QPlainTextEdit::WidgetWidth);
     
     wordWrapEnabled = true;
@@ -59,11 +62,18 @@ int CodeEditor::lineNumberAreaWidth()
 
 void CodeEditor::updateLineNumberAreaWidth(int /* newBlockCount */)
 {
-    setViewportMargins(lineNumberAreaWidth(), 0, 0, 0);
+    //setViewportMargins(lineNumberAreaWidth(), 0, 0, 0);
+    if (showLineNumbers)
+        setViewportMargins(lineNumberAreaWidth(), 0, 0, 0);
+    else
+        setViewportMargins(0, 0, 0, 0);
 }
 
 void CodeEditor::updateLineNumberArea(const QRect &rect, int dy)
 {
+    if (!showLineNumbers)
+        return;
+
     if (dy)
         lineNumberArea->scroll(0, dy);
     else
@@ -78,7 +88,12 @@ void CodeEditor::resizeEvent(QResizeEvent *e)
     QPlainTextEdit::resizeEvent(e);
 
     QRect cr = contentsRect();
-    lineNumberArea->setGeometry(QRect(cr.left(), cr.top(), lineNumberAreaWidth(), cr.height()));
+    //lineNumberArea->setGeometry(QRect(cr.left(), cr.top(), lineNumberAreaWidth(), cr.height()));
+
+    if (showLineNumbers)
+        lineNumberArea->setGeometry(QRect(cr.left(), cr.top(), lineNumberAreaWidth(), cr.height()));
+    else
+        lineNumberArea->setGeometry(QRect());
 }
 
 void CodeEditor::keyPressEvent(QKeyEvent *event)
@@ -88,6 +103,25 @@ void CodeEditor::keyPressEvent(QKeyEvent *event)
         indentSelection(unindent);
         return;
     }
+
+    if (!event->text().isEmpty() && !textCursor().hasSelection()) {
+        QChar ch = event->text().at(0);
+        QChar closing;
+        if (ch == '(') closing = ')';
+        else if (ch == '[') closing = ']';
+        else if (ch == '{') closing = '}';
+        else if (ch == '"') closing = '"';
+        else if (ch == '\'') closing = '\'';
+        if (!closing.isNull()) {
+            QPlainTextEdit::keyPressEvent(event);
+            insertPlainText(QString(closing));
+            QTextCursor c = textCursor();
+            c.movePosition(QTextCursor::Left);
+            setTextCursor(c);
+            return;
+        }
+    }
+
     QPlainTextEdit::keyPressEvent(event);
 }
 
@@ -379,7 +413,9 @@ void CodeEditor::applyLightTheme()
     lineNumberAreaTextColor = QColor("#555555");
     bracketMatchColor = QColor("#ffd966");
     highlightCurrentLine();
-    lineNumberArea->update();
+    //lineNumberArea->update();
+    if (showLineNumbers)
+        lineNumberArea->update();
 }
 
 void CodeEditor::applyDarkTheme()
@@ -390,13 +426,50 @@ void CodeEditor::applyDarkTheme()
     lineNumberAreaTextColor = QColor("#aaaaaa");
     bracketMatchColor = QColor("#806000");
     highlightCurrentLine();
-    lineNumberArea->update();
+    //lineNumberArea->update();
+    if (showLineNumbers)
+        lineNumberArea->update();
+}
+
+void CodeEditor::applySolarizedLightTheme()
+{
+    setStyleSheet("background-color:#fdf6e3;color:#657b83;");
+    lineHighlightColor = QColor("#eee8d5");
+    lineNumberAreaBgColor = QColor("#eee8d5");
+    lineNumberAreaTextColor = QColor("#586e75");
+    bracketMatchColor = QColor("#b58900");
+    highlightCurrentLine();
+    //lineNumberArea->update();
+    if (showLineNumbers)
+        lineNumberArea->update();
+}
+
+void CodeEditor::applySolarizedDarkTheme()
+{
+    setStyleSheet("background-color:#002b36;color:#839496;");
+    lineHighlightColor = QColor("#073642");
+    lineNumberAreaBgColor = QColor("#073642");
+    lineNumberAreaTextColor = QColor("#586e75");
+    bracketMatchColor = QColor("#b58900");
+    highlightCurrentLine();
+    //lineNumberArea->update();
+    if (showLineNumbers)
+        lineNumberArea->update();
 }
 
 void CodeEditor::setWordWrap(bool enable)
 {
     wordWrapEnabled = enable;
     setLineWrapMode(enable ? QPlainTextEdit::WidgetWidth : QPlainTextEdit::NoWrap);
+}
+
+
+void CodeEditor::setLineNumbersVisible(bool visible)
+{
+    showLineNumbers = visible;
+    lineNumberArea->setVisible(visible);
+    updateLineNumberAreaWidth(0);
+    update();
 }
 
 
@@ -488,6 +561,26 @@ void CodeEditor::handleAskGemini()
         c.setPosition(c.selectionEnd());
         c.insertText("\n" + response + "\n");
     }
+}
+
+
+void CodeEditor::duplicateLine()
+{
+    QTextCursor cursor = textCursor();
+    QString text;
+    if (cursor.hasSelection()) {
+        text = cursor.selection().toPlainText();
+        cursor.setPosition(cursor.selectionEnd());
+    } else {
+        cursor.movePosition(QTextCursor::StartOfLine);
+        cursor.movePosition(QTextCursor::EndOfLine, QTextCursor::KeepAnchor);
+        text = cursor.selection().toPlainText();
+        cursor.clearSelection();
+        cursor.movePosition(QTextCursor::EndOfLine);
+    }
+    cursor.insertBlock();
+    cursor.insertText(text);
+    setTextCursor(cursor);
 }
 
 //Kamakura-- Mehrdad S. Beni and Hiroshi Watabe, Japan 2023

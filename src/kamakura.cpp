@@ -18,6 +18,7 @@
 #include <QDebug>
 #include <QStringListModel>
 #include <QCoreApplication>
+#include <QInputDialog>
 
 //Kamakura-- Mehrdad S. Beni and Hiroshi Watabe, Japan 2023
 
@@ -88,23 +89,56 @@ void kamakura::setupDocks()
 
     QAction* lightTheme = viewMenu->addAction("Light Theme");
     QAction* darkTheme = viewMenu->addAction("Dark Theme");
+    QAction* solarizedLight = viewMenu->addAction("Solarized Light Theme");
+    QAction* solarizedDark = viewMenu->addAction("Solarized Dark Theme");
 
     lightTheme->setCheckable(true);
     darkTheme->setCheckable(true);
+    solarizedLight->setCheckable(true);
+    solarizedDark->setCheckable(true);
+
+
     themeGroup->addAction(lightTheme);
     themeGroup->addAction(darkTheme);
     //darkTheme->setChecked(true);
-    lightTheme->setChecked(true);
+    //lightTheme->setChecked(true);
+
+    themeGroup->addAction(solarizedLight);
+    themeGroup->addAction(solarizedDark);
+
+    switch (currentTheme) {
+    case Theme::Dark:
+        darkTheme->setChecked(true);
+        break;
+    case Theme::SolarizedLight:
+        solarizedLight->setChecked(true);
+        break;
+    case Theme::SolarizedDark:
+        solarizedDark->setChecked(true);
+        break;
+    default:
+        lightTheme->setChecked(true);
+        break;
+    }
 
     //wordWrapAction = viewMenu->addAction(tr("Word Wrap"));
 
     wordWrapAction = viewMenu->addAction("Word Wrap");
 
+    lineNumbersAction = viewMenu->addAction("Show Line Numbers");
+
     wordWrapAction->setCheckable(true);
     wordWrapAction->setChecked(wordWrapEnabled);
 
+    lineNumbersAction->setCheckable(true);
+    lineNumbersAction->setChecked(lineNumbersEnabled);
+
     connect(lightTheme, &QAction::triggered, this, &kamakura::setLightTheme);
     connect(darkTheme, &QAction::triggered, this, &kamakura::setDarkTheme);
+    connect(solarizedLight, &QAction::triggered, this, &kamakura::setSolarizedLightTheme);
+    connect(solarizedDark, &QAction::triggered, this, &kamakura::setSolarizedDarkTheme);
+
+
 
    languageMenu = menuBar()->addMenu("Language");
     QActionGroup* langGroup = new QActionGroup(this);
@@ -129,6 +163,7 @@ void kamakura::setupConnections()
     connect(opened_docs_widget, &QListWidget::itemClicked, this, &kamakura::syncTabSelectionWithList);
 
     connect(wordWrapAction, &QAction::toggled, this, &kamakura::toggleWordWrap);
+    connect(lineNumbersAction, &QAction::toggled, this, &kamakura::toggleLineNumbers);
 }
 
 void kamakura::setupEditor(CodeEditor* editor)
@@ -140,12 +175,30 @@ void kamakura::setupEditor(CodeEditor* editor)
     font.setPointSize(12);
     editor->setFont(font);
 
-    if (darkThemeEnabled)
+    //if (darkThemeEnabled)
+    //    editor->applyDarkTheme();
+    //else
+    //    editor->applyLightTheme();
+
+    switch (currentTheme) {
+    case Theme::Dark:
         editor->applyDarkTheme();
-    else
+        break;
+    case Theme::SolarizedLight:
+        editor->applySolarizedLightTheme();
+        break;
+    case Theme::SolarizedDark:
+        editor->applySolarizedDarkTheme();
+        break;
+    default:
         editor->applyLightTheme();
+        break;
+    }
+
 
     editor->setWordWrap(wordWrapEnabled);
+
+    editor->setLineNumbersVisible(lineNumbersEnabled);
 
     connect(editor, &QPlainTextEdit::modificationChanged, this, &kamakura::updateTabDirtyStatus);
 }
@@ -437,6 +490,38 @@ void kamakura::on_actionSearch_and_Replace_triggered()
     findDialog->activateWindow();
 }
 
+
+void kamakura::on_actionGoToLine_triggered()
+{
+    CodeEditor* editor = currentEditor();
+    if (!editor) return;
+
+    bool ok = false;
+    int maxLine = editor->document()->blockCount();
+    int current = editor->textCursor().blockNumber() + 1;
+    int line = QInputDialog::getInt(this,
+                                    trLang("Go to Line", "\xE8\xA1\x8C\xE3\x81\xB8\xE7\xA7\xBB\xE5\x8B\x95"),
+                                    trLang("Line number:", "\xE8\xA1\x8C\xE7\x95\xAA\xE5\x8F\xB7:"),
+                                    current, 1, maxLine, 1, &ok);
+    if (ok) {
+        QTextBlock block = editor->document()->findBlockByNumber(line - 1);
+        if (block.isValid()) {
+            QTextCursor cursor(block);
+            editor->setTextCursor(cursor);
+            editor->centerCursor();
+        }
+    }
+}
+
+
+void kamakura::on_actionDuplicate_Line_triggered()
+{
+    if (auto editor = currentEditor()) {
+        editor->duplicateLine();
+    }
+}
+
+
 void kamakura::on_actionKamakura_triggered()
 {
     //QMessageBox::about(this, "About Kamakura",
@@ -449,11 +534,11 @@ QMessageBox::about(
     trLang("About Kamakura", "Kamakura\xE3\x81\xAB\xE3\x81\xA4\xE3\x81\x84\xE3\x81\xA6"),
     trLang(
         "<p><b>Kamakura Code Editor</b></p>"
-        "<p>Version 2.0</p>"
+        "<p>Version 3.0</p>"
         "<p>A lightweight, extensible code editor.</p>"
         "<p>By Mehrdad S. Beni & Hiroshi Watabe, 2025.</p>",
         "<p><b>Kamakura\xE3\x82\xB3\xE3\x83\xBC\xE3\x83\x89\xE3\x82\xA8\xE3\x83\x87\xE3\x82\xA3\xE3\x82\xBF</b></p>"
-        "<p>\xE3\x83\x90\xE3\x83\xBC\xE3\x82\xB8\xE3\x83\xA7\xE3\x83\xB3 2.0</p>"
+        "<p>\xE3\x83\x90\xE3\x83\xBC\xE3\x82\xB8\xE3\x83\xA7\xE3\x83\xB3 3.0</p>"
         "<p>\xE8\xBB\xBD\xE9\x87\x8F\xE3\x81\xA7\xE6\x8B\xA1\xE5\xBC\xB5\xE6\x80\xA7\xE3\x81\xAE\xE3\x81\x82\xE3\x82\x8B\xE3\x82\xB3\xE3\x83\xBC\xE3\x83\x89\xE3\x82\xA8\xE3\x83\x87\xE3\x82\xA3\xE3\x82\xBF\xE3\x81\xA7\xE3\x81\x99\xE3\x80\x82</p>"
         "<p>Mehrdad S. Beni & Hiroshi Watabe, 2025.</p>"
     )
@@ -484,7 +569,8 @@ QMessageBox::information(
 
 void kamakura::setLightTheme()
 {
-    darkThemeEnabled = false;
+    //darkThemeEnabled = false;
+     currentTheme = Theme::Light;
     qApp->setPalette(qApp->style()->standardPalette());
     for (int i = 0; i < tabs->count(); ++i) {
         if (auto editor = qobject_cast<CodeEditor*>(tabs->widget(i))) {
@@ -499,6 +585,17 @@ void kamakura::toggleWordWrap(bool enabled)
     for (int i = 0; i < tabs->count(); ++i) {
         if (auto editor = qobject_cast<CodeEditor*>(tabs->widget(i))) {
             editor->setWordWrap(enabled);
+        }
+    }
+}
+
+
+void kamakura::toggleLineNumbers(bool enabled)
+{
+    lineNumbersEnabled = enabled;
+    for (int i = 0; i < tabs->count(); ++i) {
+        if (auto editor = qobject_cast<CodeEditor*>(tabs->widget(i))) {
+            editor->setLineNumbersVisible(enabled);
         }
     }
 }
@@ -520,11 +617,65 @@ void kamakura::setDarkTheme()
     darkPalette.setColor(QPalette::BrightText, Qt::red);
     darkPalette.setColor(QPalette::Highlight, QColor(142,45,197).lighter());
     darkPalette.setColor(QPalette::HighlightedText, Qt::black);
-    darkThemeEnabled = true;
+    //darkThemeEnabled = true;
+
+    currentTheme = Theme::Dark;
+
     qApp->setPalette(darkPalette);
     for (int i = 0; i < tabs->count(); ++i) {
         if (auto editor = qobject_cast<CodeEditor*>(tabs->widget(i))) {
             editor->applyDarkTheme();
+        }
+    }
+}
+
+
+void kamakura::setSolarizedLightTheme()
+{
+    qApp->setStyle("Fusion");
+    QPalette palette;
+    palette.setColor(QPalette::Window, QColor("#fdf6e3"));
+    palette.setColor(QPalette::WindowText, QColor("#657b83"));
+    palette.setColor(QPalette::Base, QColor("#eee8d5"));
+    palette.setColor(QPalette::AlternateBase, QColor("#fdf6e3"));
+    palette.setColor(QPalette::ToolTipBase, QColor("#657b83"));
+    palette.setColor(QPalette::ToolTipText, QColor("#657b83"));
+    palette.setColor(QPalette::Text, QColor("#657b83"));
+    palette.setColor(QPalette::Button, QColor("#eee8d5"));
+    palette.setColor(QPalette::ButtonText, QColor("#657b83"));
+    palette.setColor(QPalette::BrightText, QColor("#dc322f"));
+    palette.setColor(QPalette::Highlight, QColor("#b58900"));
+    palette.setColor(QPalette::HighlightedText, QColor("#fdf6e3"));
+    currentTheme = Theme::SolarizedLight;
+    qApp->setPalette(palette);
+    for (int i = 0; i < tabs->count(); ++i) {
+        if (auto editor = qobject_cast<CodeEditor*>(tabs->widget(i))) {
+            editor->applySolarizedLightTheme();
+        }
+    }
+}
+
+void kamakura::setSolarizedDarkTheme()
+{
+    qApp->setStyle("Fusion");
+    QPalette palette;
+    palette.setColor(QPalette::Window, QColor("#002b36"));
+    palette.setColor(QPalette::WindowText, QColor("#839496"));
+    palette.setColor(QPalette::Base, QColor("#073642"));
+    palette.setColor(QPalette::AlternateBase, QColor("#002b36"));
+    palette.setColor(QPalette::ToolTipBase, QColor("#839496"));
+    palette.setColor(QPalette::ToolTipText, QColor("#839496"));
+    palette.setColor(QPalette::Text, QColor("#839496"));
+    palette.setColor(QPalette::Button, QColor("#073642"));
+    palette.setColor(QPalette::ButtonText, QColor("#839496"));
+    palette.setColor(QPalette::BrightText, QColor("#dc322f"));
+    palette.setColor(QPalette::Highlight, QColor("#586e75"));
+    palette.setColor(QPalette::HighlightedText, QColor("#002b36"));
+    currentTheme = Theme::SolarizedDark;
+    qApp->setPalette(palette);
+    for (int i = 0; i < tabs->count(); ++i) {
+        if (auto editor = qobject_cast<CodeEditor*>(tabs->widget(i))) {
+            editor->applySolarizedDarkTheme();
         }
     }
 }
@@ -554,6 +705,7 @@ void kamakura::setLanguage(Language lang)
     ui->actionCopy->setText(trLang("Copy", "\xE3\x82\xB3\xE3\x83\x94\xE3\x83\xBC"));
     ui->actionPaste->setText(trLang("Paste", "\xE8\xB2\xBC\xE3\x82\x8A\xE4\xBB\x98\xE3\x81\x91"));
     ui->actionCut->setText(trLang("Cut", "\xE5\x89\xB2\xE3\x82\x8A\xE5\x8F\x96\xE3\x82\x8A"));
+    ui->actionDuplicate_Line->setText(trLang("Duplicate Line", "\xE8\xA1\x8C\xE3\x82\x92\xE8\xA4\x87\xE8\xA3\xBD"));
     ui->actionZoom->setText(trLang("Zoom+", "\xE3\x82\xBA\xE3\x83\xBC\xE3\x83\xA0+"));
     ui->actionZoom_2->setText(trLang("Zoom-", "\xE3\x82\xBA\xE3\x83\xBC\xE3\x83\xA0-"));
     ui->actionSearch_and_Replace->setText(trLang("Search and Replace", "\xE6\xA4\x9C\xE7\xB4\xA2\xE7\xAD\x89\xE3\x81\xA8\xE7\xBD\xAE\xE6\x8F\x9B"));
@@ -566,6 +718,10 @@ void kamakura::setLanguage(Language lang)
         languageMenu->setTitle(trLang("Language", "\xE8\xA8\x80\xE8\xAA\x9E"));
 
     wordWrapAction->setText(trLang("Word Wrap", "\xE8\xA1\x8C\xE6\x8A\x98\xE3\x82\x8A\xE8\xBE\xBC\xE3\x81\xBF"));
+    if(lineNumbersAction)
+        lineNumbersAction->setText(trLang("Show Line Numbers", "\xE8\xA1\x8C\xE7\x95\xAA\xE5\x8F\xB7\xE3\x82\x92\xE8\xA1\xA8\xE7\xA4\xBA"));
 
     metricReporter->setLanguage(lang);
 }
+
+//Kamakura-- Mehrdad S. Beni and Hiroshi Watabe, Japan 2023
