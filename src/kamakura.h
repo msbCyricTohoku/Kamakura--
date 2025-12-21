@@ -23,6 +23,7 @@ class QModelIndex;
 class QDragEnterEvent;
 class QDropEvent;
 class QAction;
+class QLabel;
 
 
 enum class Theme {
@@ -66,6 +67,7 @@ private slots:
     void on_actionInsert_DateTime_triggered();
     void on_actionKamakura_triggered();
     void on_actionHowTo_triggered();
+     void on_actionTrim_Trailing_Spaces_triggered();
 
     void setLightTheme();
     void setDarkTheme();
@@ -94,6 +96,9 @@ private:
     Highlighter* highlighter;
     FindDialog *findDialog;
     MetricReporter *metricReporter;
+    QLabel* syntaxLabel{nullptr};
+    bool hasCurrentHighlighting{false};
+
 
     //bool darkThemeEnabled{true};
     //bool darkThemeEnabled{false};
@@ -123,7 +128,8 @@ private:
     void updateRecentFilesMenu();
     void loadRecentFiles();
     void saveRecentFiles();
-
+    void updateSyntaxLabel(const QString& extension, bool hasHighlighting);
+    QString syntaxNameForExtension(const QString& extension) const;
 
     void setupEditor(CodeEditor* editor);
     void setupDocks();

@@ -166,9 +166,27 @@ void Highlighter::highlightBlock(const QString& text) {
     applyRules(text, currentLanguage->quotationRules);
     applyRules(text, currentLanguage->singleLineCommentRules);
 
+
+    const bool hasMultiline =
+        currentLanguage->multiLineCommentStart.isValid() &&
+        currentLanguage->multiLineCommentEnd.isValid() &&
+        !currentLanguage->multiLineCommentStart.pattern().isEmpty() &&
+        !currentLanguage->multiLineCommentEnd.pattern().isEmpty();
+
+    if (!hasMultiline) {
+        setCurrentBlockState(0);
+        return;
+    }
+
+
     // Handle multi-line comments last
     setCurrentBlockState(0);
-    int startIndex = (previousBlockState() != 1) ? currentLanguage->multiLineCommentStart.match(text).capturedStart() : 0;
+
+    //int startIndex = (previousBlockState() != 1) ? currentLanguage->multiLineCommentStart.match(text).capturedStart() : 0;
+
+    int startIndex = (previousBlockState() != 1)
+                         ? currentLanguage->multiLineCommentStart.match(text).capturedStart()
+                         : 0;
 
     while (startIndex >= 0) {
         QRegularExpressionMatch endMatch = currentLanguage->multiLineCommentEnd.match(text, startIndex);

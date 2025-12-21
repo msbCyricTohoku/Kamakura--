@@ -96,6 +96,7 @@
     <addaction name="actionSearch_and_Replace"/>
     <addaction name="actionGoToLine"/>
     <addaction name="actionInsert_DateTime"/>
+    <addaction name="actionTrim_Trailing_Spaces"/>
    </widget>
    <widget class="QMenu" name="menuAbout">
     <property name="font">
@@ -437,6 +438,18 @@
    </property>
    <property name="shortcut">
     <string>F5</string>
+   </property>
+  </action>
+  <action name="actionTrim_Trailing_Spaces">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/new/prefix1/resources/white.png</normaloff>:/new/prefix1/resources/white.png</iconset>
+   </property>
+   <property name="text">
+    <string>Trim Trailing Spaces</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+T</string>
    </property>
   </action>
   <action name="actionHowTo">

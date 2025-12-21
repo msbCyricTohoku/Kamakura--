@@ -101,6 +101,20 @@ void CodeEditor::resizeEvent(QResizeEvent *e)
 
 void CodeEditor::keyPressEvent(QKeyEvent *event)
 {
+    if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter) {
+        QTextCursor cursor = textCursor();
+        QString currentLine = cursor.block().text();
+        QString indentation = indentationForNewLine(cursor.block());
+        if (shouldIncreaseIndent(currentLine)) {
+            indentation.append(QString(NUM_CHARS_FOR_TAB, QLatin1Char(' ')));
+        }
+        QPlainTextEdit::keyPressEvent(event);
+        cursor = textCursor();
+        cursor.insertText(indentation);
+        setTextCursor(cursor);
+        return;
+    }
+
     if (event->key() == Qt::Key_Tab && textCursor().hasSelection()) {
         bool unindent = event->modifiers() & Qt::ShiftModifier;
         indentSelection(unindent);
@@ -515,6 +529,58 @@ void CodeEditor::indentSelection(bool unindent)
     int endPos = afterEnd.isValid() ? afterEnd.position() - 1 : document()->characterCount() - 1;
     newCursor.setPosition(endPos, QTextCursor::KeepAnchor);
     setTextCursor(newCursor);
+}
+
+
+QString CodeEditor::indentationForNewLine(const QTextBlock& block) const
+{
+    QString text = block.text();
+    QString indentation;
+    for (QChar ch : text) {
+        if (ch == QLatin1Char(' ') || ch == QLatin1Char('\t'))
+            indentation.append(ch);
+        else
+            break;
+    }
+    return indentation;
+}
+
+bool CodeEditor::shouldIncreaseIndent(const QString& line) const
+{
+    QString trimmed = line.trimmed();
+    if (trimmed.isEmpty())
+        return false;
+    const QChar last = trimmed.at(trimmed.size() - 1);
+    return last == QLatin1Char('{') ||
+           last == QLatin1Char('[') ||
+           last == QLatin1Char('(') ||
+           last == QLatin1Char(':');
+}
+
+void CodeEditor::trimTrailingWhitespace()
+{
+    QTextCursor cursor(document());
+    cursor.beginEditBlock();
+
+    QTextBlock block = document()->firstBlock();
+    while (block.isValid()) {
+        QString text = block.text();
+        int trimmedLength = text.length();
+        while (trimmedLength > 0 && text.at(trimmedLength - 1).isSpace()) {
+            --trimmedLength;
+        }
+
+        if (trimmedLength != text.length()) {
+            QTextCursor blockCursor(block);
+            blockCursor.setPosition(block.position() + trimmedLength);
+            blockCursor.setPosition(block.position() + text.length(), QTextCursor::KeepAnchor);
+            blockCursor.removeSelectedText();
+        }
+
+        block = block.next();
+    }
+
+    cursor.endEditBlock();
 }
 
 

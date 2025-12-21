@@ -21,6 +21,7 @@
 #include <QInputDialog>
 #include <QSettings>
 #include <QStringList>
+#include <QLabel>
 
 //Kamakura-- Mehrdad S. Beni and Hiroshi Watabe, Japan 2023
 
@@ -50,6 +51,10 @@ kamakura::kamakura(QWidget *parent)
     findDialog = new FindDialog(this);
     metricReporter = new MetricReporter(this);
     ui->statusbar->addPermanentWidget(metricReporter, 1);
+    syntaxLabel = new QLabel(tr("Syntax: Plain Text"), this);
+    syntaxLabel->setContentsMargins(10, 0, 10, 0);
+    ui->statusbar->addPermanentWidget(syntaxLabel);
+
 
     setupDocks();
     setupConnections();
@@ -68,6 +73,7 @@ kamakura::kamakura(QWidget *parent)
 
     on_actionNew_triggered(); // Start with a new, empty tab
     updateWindowTitle("");
+    updateSyntaxLabel(QString(), false);
 }
 
 kamakura::~kamakura()
@@ -406,11 +412,15 @@ void kamakura::onCurrentTabChanged(int index)
 
     QFileInfo fileInfo(tabs->tabToolTip(index));
     highlighter->setDocument(editor->document());
-    highlighter->setExtension(fileInfo.suffix());
+    //highlighter->setExtension(fileInfo.suffix());
+    QString ext = fileInfo.suffix().toLower();
+    hasCurrentHighlighting = highlighter->setExtension(ext);
+
     highlighter->rehighlight();
 
 
-    QString ext = fileInfo.suffix().toLower();
+    //QString ext = fileInfo.suffix().toLower();
+    updateSyntaxLabel(ext, hasCurrentHighlighting);
     QString prefix = "#";
     if (ext == "c" || ext == "cpp" || ext == "h" || ext == "hpp" || ext == "rs" || ext == "js")
         prefix = "//";
@@ -559,6 +569,15 @@ void kamakura::on_actionInsert_DateTime_triggered()
 {
     if (auto editor = currentEditor()) {
         editor->insertDateTime();
+    }
+}
+
+void kamakura::on_actionTrim_Trailing_Spaces_triggered()
+{
+    if (auto editor = currentEditor()) {
+        editor->trimTrailingWhitespace();
+        editor->updateMetrics();
+        ui->statusbar->showMessage(trLang("Removed trailing spaces", "\xE6\x9C\xAB\xE5\xB0\xBE\xE3\x81\xAE\xE7\xA9\xBA\xE7\x99\xBD\xE3\x82\x92\xE5\x89\x8A\xE9\x99\xA4"), 2000);
     }
 }
 
@@ -752,6 +771,7 @@ void kamakura::setLanguage(Language lang)
     ui->actionSearch_and_Replace->setText(trLang("Search and Replace", "\xE6\xA4\x9C\xE7\xB4\xA2\xE7\xAD\x89\xE3\x81\xA8\xE7\xBD\xAE\xE6\x8F\x9B"));
     ui->actionHowTo->setText(trLang("HowTo", "\xE4\xBD\xBF\xE3\x81\x84\xE6\x96\xB9"));
     ui->actionKamakura->setText(trLang("Kamakura", "Kamakura"));
+    ui->actionTrim_Trailing_Spaces->setText(trLang("Trim Trailing Spaces", "\xE6\x9C\xAB\xE5\xB0\xBE\xE3\x81\xAE\xE7\xA9\xBA\xE7\x99\xBD\xE3\x82\x92\xE5\x89\x8A\xE9\x99\xA4"));
 
     englishAction->setText(trLang("English", "\xE8\x8B\xB1\xE8\xAA\x9E"));
     japaneseAction->setText(trLang("Japanese", "\xE6\x97\xA5\xE6\x9C\xAC\xE8\xAA\x9E"));
@@ -763,6 +783,12 @@ void kamakura::setLanguage(Language lang)
         lineNumbersAction->setText(trLang("Show Line Numbers", "\xE8\xA1\x8C\xE7\x95\xAA\xE5\x8F\xB7\xE3\x82\x92\xE8\xA1\xA8\xE7\xA4\xBA"));
 
     metricReporter->setLanguage(lang);
+    if (tabs && tabs->count() > 0) {
+        QFileInfo info(tabs->tabToolTip(tabs->currentIndex()));
+        updateSyntaxLabel(info.suffix(), hasCurrentHighlighting);
+    } else {
+        updateSyntaxLabel(QString(), hasCurrentHighlighting);
+    }
 }
 
 
@@ -802,6 +828,38 @@ void kamakura::saveRecentFiles()
 {
     QSettings settings("Kamakura", "Kamakura");
     settings.setValue("recentFiles", recentFiles);
+}
+
+
+
+QString kamakura::syntaxNameForExtension(const QString& extension) const
+{
+    QString ext = extension.toLower();
+    if (ext == "i" || ext == "inp") return trLang("PHITS", "PHITS");
+    if (ext == "py" || ext == "pyw") return trLang("Python", "Python");
+    if (ext == "c" || ext == "cc" || ext == "cpp" || ext == "h" || ext == "hpp") return trLang("C/C++", "C/C++");
+    if (ext == "rs") return trLang("Rust", "Rust");
+    if (ext == "hs") return trLang("Haskell", "Haskell");
+    if (ext == "f90" || ext == "f95" || ext == "f") return trLang("Fortran", "Fortran");
+    if (ext == "html" || ext == "htm") return trLang("HTML", "HTML");
+    if (ext == "css") return trLang("CSS", "CSS");
+    return QString();
+}
+
+void kamakura::updateSyntaxLabel(const QString& extension, bool hasHighlighting)
+{
+    if (!syntaxLabel)
+        return;
+
+    QString name = syntaxNameForExtension(extension);
+    if (name.isEmpty())
+        name = trLang("Plain Text", "\xE3\x83\x97\xE3\x83\xAC\xE3\x83\xBC\xE3\x83\x86\xE3\x82\xAD\xE3\x82\xB9\xE3\x83\x88");
+
+    QString prefix = trLang("Syntax: ", "\xE3\x82\xB7\xE3\x83\xB3\xE3\x82\xBF\xE3\x83\x83\xE3\x82\xAF\xE3\x82\xB9: ");
+    if (!hasHighlighting && !extension.isEmpty()) {
+        name += trLang(" (no highlighting)", " (\xE3\x83\x8F\xE3\x82\xA4\xE3\x83\xA9\xE3\x82\xA4\xE3\x83\x88\xE3\x81\xAA\xE3\x81\x97)");
+    }
+    syntaxLabel->setText(prefix + name);
 }
 
 //Kamakura-- Mehrdad S. Beni and Hiroshi Watabe, Japan 2023

@@ -84,10 +84,13 @@ public slots:
     void toggleComment();
     void insertDateTime();
     void setCommentPrefix(const QString& prefix);
+    void trimTrailingWhitespace();
 
 private:
     QWidget *lineNumberArea;
     void indentSelection(bool unindent);
+    QString indentationForNewLine(const QTextBlock& block) const;
+    bool shouldIncreaseIndent(const QString& line) const;
      DocumentMetrics metrics;
      QString getFileNameFromPath();
      QColor lineHighlightColor;
