@@ -87,7 +87,7 @@
 * **Recent Files Menu**
   Reopen recently opened files in one click.
 
-* **Trim White Space
+* **Trim White Space**
   Trim white-spaces in the code or text.
 ---
 
