@@ -28,10 +28,10 @@ MetricReporter::MetricReporter(QWidget *parent) : QFrame(parent)
 void MetricReporter::setLanguage(Language lang)
 {
     if (lang == Language::Japanese) {
-        wordLabel->setText(QString::fromUtf8("\xE5\x8D\x98\xE8\xAA\x9E: "));
-        charLabel->setText(QString::fromUtf8("\xE6\x96\x87\xE5\xAD\x97: "));
-        lineLabel->setText(QString::fromUtf8("\xE8\xA1\x8C: "));
-        columnLabel->setText(QString::fromUtf8("\xE5\x88\x97: "));
+        wordLabel->setText("単語: ");
+        charLabel->setText("文字: ");
+        lineLabel->setText("行: ");
+        columnLabel->setText("列: ");
     } else {
         wordLabel->setText("Words: ");
         charLabel->setText("Chars: ");

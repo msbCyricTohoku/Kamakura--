@@ -246,7 +246,7 @@ void kamakura::on_actionOpen_triggered()
 {
     //QString filePath = QFileDialog::getOpenFileName(this, "Open File", QDir::homePath());
     QString filePath = QFileDialog::getOpenFileName(this,
-                                                   trLang("Open File", "\xE3\x83\x95\xE3\x82\xA1\xE3\x82\xA4\xE3\x83\xAB\xE3\x82\x92\xE9\x96\x8B\xE3\x81\x8F"),
+                                                   trLang("Open File", "ファイルを開く"),
                                                    QDir::homePath());
 
     if (!filePath.isEmpty()) {
@@ -267,8 +267,8 @@ void kamakura::openFileByPath(const QString& path)
     if (!file.open(QFile::ReadOnly | QFile::Text)) {
         //QMessageBox::warning(this, "Error", "Could not open file: " + file.errorString());
         QMessageBox::warning(this,
-                             trLang("Error", "\xE3\x82\xA8\xE3\x83\xA9\xE3\x83\xBC"),
-                             trLang("Could not open file: ", "\xE3\x83\x95\xE3\x82\xA1\xE3\x82\xA4\xE3\x83\xAB\xE3\x82\x92\xE9\x96\x8B\xE3\x81\x91\xE3\x81\xBE\xE3\x81\x9B\xE3\x82\x93: ") + file.errorString());
+                             trLang("Error", "エラー"),
+                             trLang("Could not open file: ", "ファイルを開けません: ") + file.errorString());
         return;
     }
     
@@ -308,7 +308,7 @@ void kamakura::on_actionSave_triggered()
     //QString filePath = QFileDialog::getSaveFileName(this, "Save File As", QDir::homePath());
 
     QString filePath = QFileDialog::getSaveFileName(this,
-                                                   trLang("Save File As", "\xE5\x90\x8D\xE5\x89\x8D\xE3\x82\x92\xE4\xBB\x98\xE3\x81\x91\xE3\x81\xA6\xE4\xBF\x9D\xE5\xAD\x98"),
+                                                   trLang("Save File As", "名前を付けて保存"),
                                                    QDir::homePath());
 
     if (filePath.isEmpty()) return;
@@ -339,8 +339,9 @@ void kamakura::on_actionSave_2_triggered()
     if (!file.open(QFile::WriteOnly | QFile::Text)) {
         //QMessageBox::warning(this, "Error", "Could not save file: " + file.errorString());
         QMessageBox::warning(this,
-                             trLang("Error", "\xE3\x82\xA8\xE3\x83\xA9\xE3\x83\xBC"),
-                             trLang("Could not save file: ", "\xE3\x83\x95\xE3\x82\xA1\xE3\x82\xA4\xE3\x83\xAB\xE3\x82\x92\xE4\xBF\x9D\xE5\xAD\x98\xE3\x81\xA7\xE3\x81\x8D\xE3\x81\xBE\xE3\x81\x9B\xE3\x82\x93: ") + file.errorString());
+                             trLang("Error", "エラー"),
+                             trLang("Could not save file: ", "ファイルを保存できません: ") + file.errorString());
+
 
         return;
     }
@@ -349,7 +350,7 @@ void kamakura::on_actionSave_2_triggered()
     file.close();
     editor->document()->setModified(false);
     //ui->statusbar->showMessage("File saved", 2000);
-    ui->statusbar->showMessage(trLang("File saved", "\xE4\xBF\x9D\xE5\xAD\x98\xE5\xAE\x8C\xE4\xBA\x86"), 2000);
+    ui->statusbar->showMessage(trLang("File saved", "保存しました"), 2000);
 }
 
 
@@ -362,9 +363,9 @@ void kamakura::closeTab(int index)
         //    "'" + tabs->tabText(index) + "' has been modified. Save changes?",
 
         reply = QMessageBox::question(this,
-            trLang("Unsaved Changes", "\xE4\xBF\x9D\xE5\xAD\x98\xE3\x81\x95\xE3\x82\x8C\xE3\x81\xA6\xE3\x81\x84\xE3\x81\xAA\xE3\x81\x84\xE5\xA4\x89\xE6\x9B\xB4"),
+            trLang("Unsaved Changes", "保存されていない変更"),
             trLang("'" + tabs->tabText(index) + "' has been modified. Save changes?",
-                  "'" + tabs->tabText(index) + "'\xE3\x81\xAF\xE7\xB7\xA8\xE9\x9B\x86\xE3\x81\x95\xE3\x82\x8C\xE3\x81\xBE\xE3\x81\x97\xE3\x81\x9F\xE3\x80\x82\xE4\xBF\x9D\xE5\xAD\x98\xE3\x81\x97\xE3\x81\xBE\xE3\x81\x99\xE3\x81\x8B\xEF\xBC\x9F"),
+                  "'" + tabs->tabText(index) + "' は編集されています。保存しますか？"),
             QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
 
         if (reply == QMessageBox::Save) {
@@ -535,8 +536,8 @@ void kamakura::on_actionGoToLine_triggered()
     int maxLine = editor->document()->blockCount();
     int current = editor->textCursor().blockNumber() + 1;
     int line = QInputDialog::getInt(this,
-                                    trLang("Go to Line", "\xE8\xA1\x8C\xE3\x81\xB8\xE7\xA7\xBB\xE5\x8B\x95"),
-                                    trLang("Line number:", "\xE8\xA1\x8C\xE7\x95\xAA\xE5\x8F\xB7:"),
+                                    trLang("Go to Line", "行へ移動"),
+                                    trLang("Line number:", "行番号:"),
                                     current, 1, maxLine, 1, &ok);
     if (ok) {
         QTextBlock block = editor->document()->findBlockByNumber(line - 1);
@@ -577,7 +578,7 @@ void kamakura::on_actionTrim_Trailing_Spaces_triggered()
     if (auto editor = currentEditor()) {
         editor->trimTrailingWhitespace();
         editor->updateMetrics();
-        ui->statusbar->showMessage(trLang("Removed trailing spaces", "\xE6\x9C\xAB\xE5\xB0\xBE\xE3\x81\xAE\xE7\xA9\xBA\xE7\x99\xBD\xE3\x82\x92\xE5\x89\x8A\xE9\x99\xA4"), 2000);
+         ui->statusbar->showMessage(trLang("Removed trailing spaces", "末尾の空白を削除しました"), 2000);
     }
 }
 
@@ -591,16 +592,16 @@ void kamakura::on_actionKamakura_triggered()
         //"<p>By Mehrdad S. Beni & Hiroshi Watabe, 2025.</p>");
 QMessageBox::about(
     this,
-    trLang("About Kamakura", "Kamakura\xE3\x81\xAB\xE3\x81\xA4\xE3\x81\x84\xE3\x81\xA6"),
+    trLang("About Kamakura", "Kamakuraについて"),
     trLang(
         "<p><b>Kamakura Code Editor</b></p>"
         "<p>Version 4.0</p>"
         "<p>A lightweight, extensible code editor.</p>"
         "<p>By Mehrdad S. Beni & Hiroshi Watabe, 2025.</p>",
-        "<p><b>Kamakura\xE3\x82\xB3\xE3\x83\xBC\xE3\x83\x89\xE3\x82\xA8\xE3\x83\x87\xE3\x82\xA3\xE3\x82\xBF</b></p>"
-        "<p>\xE3\x83\x90\xE3\x83\xBC\xE3\x82\xB8\xE3\x83\xA7\xE3\x83\xB3 3.0</p>"
-        "<p>\xE8\xBB\xBD\xE9\x87\x8F\xE3\x81\xA7\xE6\x8B\xA1\xE5\xBC\xB5\xE6\x80\xA7\xE3\x81\xAE\xE3\x81\x82\xE3\x82\x8B\xE3\x82\xB3\xE3\x83\xBC\xE3\x83\x89\xE3\x82\xA8\xE3\x83\x87\xE3\x82\xA3\xE3\x82\xBF\xE3\x81\xA7\xE3\x81\x99\xE3\x80\x82</p>"
-        "<p>Mehrdad S. Beni & Hiroshi Watabe, 2025.</p>"
+            "<p><b>Kamakuraコードエディタ</b></p>"
+            "<p>バージョン 4.0</p>"
+            "<p>軽量で拡張性のあるコードエディタです。</p>"
+            "<p>Mehrdad S. Beni & Hiroshi Watabe, 2025.</p>"
     )
 );
 
@@ -610,18 +611,12 @@ void kamakura::on_actionHowTo_triggered()
 {
 QMessageBox::information(
     this,
-    trLang("How To", "\xE4\xBD\xBF\xE3\x81\x84\xE6\x96\xB9"),
+    trLang("How To", "使い方"),
     trLang(
         "Open a file (.inp, .i, .py) to see syntax highlighting and get code completion suggestions. "
         "More language definitions can be added by creating new XML files.",
-        "\xE3\x83\x95\xE3\x82\xA1\xE3\x82\xA4\xE3\x83\xAB(.inp, .i, .py)\xE3\x82\x92\xE9\x96\x8B\xE3\x81\x84\xE3\x81\xA6"
-        "\xE3\x82\xB7\xE3\x83\xB3\xE3\x82\xBF\xE3\x83\x83\xE3\x82\xAF\xE3\x82\xB9\xE3\x83\x8F\xE3\x82\xA4\xE3\x83\xA9\xE3\x82\xA4"
-        "\xE3\x83\x88\xE3\x82\x92\xE7\xA2\xBA\xE8\xAA\x8D\xE3\x81\x97\xE3\x80\x81\xE3\x82\xB3\xE3\x83\xBC\xE3\x83\x89\xE3\x82\xB3"
-        "\xE3\x83\xB3\xE3\x83\x97\xE3\x83\xAA\xE3\x83\xBC\xE3\x82\xB7\xE3\x83\xA7\xE3\x83\xB3\xE3\x82\x92\xE8\x87\xAA\xE5\x8B\x95"
-        "\xE5\xAE\x8C\xE6\x88\x90\xE3\x81\x95\xE3\x81\x9B\xE3\x82\x8B\xE3\x81\x93\xE3\x81\xA8\xE3\x81\x8C\xE3\x81\xA7\xE3\x81\x8D"
-        "\xE3\x81\xBE\xE3\x81\x99\xE3\x80\x82\xE6\x96\xB0\xE3\x81\x97\xE3\x81\x84XML\xE3\x83\x95\xE3\x82\xA1\xE3\x82\xA4\xE3\x83\xAB"
-        "\xE3\x82\x92\xE4\xBD\x9C\xE6\x88\x90\xE3\x81\x99\xE3\x82\x8B\xE3\x81\x93\xE3\x81\xA8\xE3\x81\xA7\xE8\xA8\x80\xE8\xAA\x9E"
-        "\xE3\x82\x92\xE8\xBF\xBD\xE5\x8A\xA0\xE3\x81\xA7\xE3\x81\x8D\xE3\x81\xBE\xE3\x81\x99\xE3\x80\x82"
+            "ファイル（.inp、.i、.py）を開くとシンタックスハイライトが表示され、コード補完候補が提示されます。"
+            "新しいXMLファイルを作成することで、対応する言語を追加できます。"
     )
 );
 
@@ -751,36 +746,44 @@ void kamakura::setLanguage(Language lang)
     currentLanguage = lang;
 
     // Update dock and actions
-    opened_docs_dock->setWindowTitle(trLang("Opened Files", "\xE9\x96\x8B\xE3\x81\x84\xE3\x81\xA6\xE3\x81\x84\xE3\x82\x8B\xE3\x83\x95\xE3\x82\xA1\xE3\x82\xA4\xE3\x83\xAB"));
+    opened_docs_dock->setWindowTitle(trLang("Opened Files", "開いているファイル"));
 
-    ui->menuFile->setTitle(trLang("File", "\xE3\x83\x95\xE3\x82\xA1\xE3\x82\xA4\xE3\x83\xAB"));
-    ui->menuEdit->setTitle(trLang("Edit", "\xE7\xB7\xA8\xE9\x9B\x86"));
-    ui->menuAbout->setTitle(trLang("About", "\xE6\x83\x85\xE5\xA0\xB1"));
+    ui->menuFile->setTitle(trLang("File", "ファイル"));
+    ui->menuEdit->setTitle(trLang("Edit", "編集"));
+    ui->menuAbout->setTitle(trLang("About", "情報"));
 
-    ui->actionOpen->setText(trLang("Open", "\xE9\x96\x8B\xE3\x81\x8F"));
-    ui->actionNew->setText(trLang("New", "\xE6\x96\xB0\xE8\xA6\x8F"));
-    ui->actionQuit->setText(trLang("Quit", "\xE7\xB5\x82\xE4\xBA\x86"));
-    ui->actionSave->setText(trLang("Save As", "\xE5\x90\x8D\xE5\x89\x8D\xE3\x82\x92\xE4\xBB\x98\xE3\x81\x91\xE3\x81\xA6\xE4\xBF\x9D\xE5\xAD\x98"));
-    ui->actionSave_2->setText(trLang("Save", "\xE4\xBF\x9D\xE5\xAD\x98"));
-    ui->actionCopy->setText(trLang("Copy", "\xE3\x82\xB3\xE3\x83\x94\xE3\x83\xBC"));
-    ui->actionPaste->setText(trLang("Paste", "\xE8\xB2\xBC\xE3\x82\x8A\xE4\xBB\x98\xE3\x81\x91"));
-    ui->actionCut->setText(trLang("Cut", "\xE5\x89\xB2\xE3\x82\x8A\xE5\x8F\x96\xE3\x82\x8A"));
-    ui->actionDuplicate_Line->setText(trLang("Duplicate Line", "\xE8\xA1\x8C\xE3\x82\x92\xE8\xA4\x87\xE8\xA3\xBD"));
-    ui->actionZoom->setText(trLang("Zoom+", "\xE3\x82\xBA\xE3\x83\xBC\xE3\x83\xA0+"));
-    ui->actionZoom_2->setText(trLang("Zoom-", "\xE3\x82\xBA\xE3\x83\xBC\xE3\x83\xA0-"));
-    ui->actionSearch_and_Replace->setText(trLang("Search and Replace", "\xE6\xA4\x9C\xE7\xB4\xA2\xE7\xAD\x89\xE3\x81\xA8\xE7\xBD\xAE\xE6\x8F\x9B"));
-    ui->actionHowTo->setText(trLang("HowTo", "\xE4\xBD\xBF\xE3\x81\x84\xE6\x96\xB9"));
+    ui->actionOpen->setText(trLang("Open", "開く"));
+    ui->actionNew->setText(trLang("New", "新規"));
+    ui->actionQuit->setText(trLang("Quit", "終了"));
+    ui->actionSave->setText(trLang("Save As", "名前を付けて保存"));
+    ui->actionSave_2->setText(trLang("Save", "保存"));
+    ui->actionCopy->setText(trLang("Copy", "コピー"));
+    ui->actionPaste->setText(trLang("Paste", "貼り付け"));
+    ui->actionCut->setText(trLang("Cut", "切り取り"));
+    ui->actionDuplicate_Line->setText(trLang("Duplicate Line", "行を複製"));
+    ui->actionZoom->setText(trLang("Zoom+", "ズーム+"));
+    ui->actionZoom_2->setText(trLang("Zoom-", "ズーム-"));
+    ui->actionSearch_and_Replace->setText(trLang("Search and Replace", "検索と置換"));
+    ui->actionHowTo->setText(trLang("HowTo", "使い方"));
     ui->actionKamakura->setText(trLang("Kamakura", "Kamakura"));
-    ui->actionTrim_Trailing_Spaces->setText(trLang("Trim Trailing Spaces", "\xE6\x9C\xAB\xE5\xB0\xBE\xE3\x81\xAE\xE7\xA9\xBA\xE7\x99\xBD\xE3\x82\x92\xE5\x89\x8A\xE9\x99\xA4"));
 
-    englishAction->setText(trLang("English", "\xE8\x8B\xB1\xE8\xAA\x9E"));
-    japaneseAction->setText(trLang("Japanese", "\xE6\x97\xA5\xE6\x9C\xAC\xE8\xAA\x9E"));
+    ui->actionGoToLine->setText(trLang("Go to Line", "行へ移動"));
+
+    ui->actionToggle_Comment->setText(trLang("Toggle Comment","コメント化／解除"));
+
+    ui->actionInsert_DateTime->setText(trLang("Insert Date/Time","日付と時刻を挿入"));
+
+
+    ui->actionTrim_Trailing_Spaces->setText(trLang("Trim Trailing Spaces", "末尾の空白を削除"));
+
+    englishAction->setText(trLang("English", "英語"));
+    japaneseAction->setText(trLang("Japanese", "日本語"));
     if(languageMenu)
-        languageMenu->setTitle(trLang("Language", "\xE8\xA8\x80\xE8\xAA\x9E"));
+        languageMenu->setTitle(trLang("Language", "言語"));
 
-    wordWrapAction->setText(trLang("Word Wrap", "\xE8\xA1\x8C\xE6\x8A\x98\xE3\x82\x8A\xE8\xBE\xBC\xE3\x81\xBF"));
+    wordWrapAction->setText(trLang("Word Wrap", "自動折り返し"));
     if(lineNumbersAction)
-        lineNumbersAction->setText(trLang("Show Line Numbers", "\xE8\xA1\x8C\xE7\x95\xAA\xE5\x8F\xB7\xE3\x82\x92\xE8\xA1\xA8\xE7\xA4\xBA"));
+        lineNumbersAction->setText(trLang("Show Line Numbers", "行番号を表示"));
 
     metricReporter->setLanguage(lang);
     if (tabs && tabs->count() > 0) {
@@ -853,11 +856,11 @@ void kamakura::updateSyntaxLabel(const QString& extension, bool hasHighlighting)
 
     QString name = syntaxNameForExtension(extension);
     if (name.isEmpty())
-        name = trLang("Plain Text", "\xE3\x83\x97\xE3\x83\xAC\xE3\x83\xBC\xE3\x83\x86\xE3\x82\xAD\xE3\x82\xB9\xE3\x83\x88");
+        name = trLang("Plain Text", "プレーンテキスト");
 
-    QString prefix = trLang("Syntax: ", "\xE3\x82\xB7\xE3\x83\xB3\xE3\x82\xBF\xE3\x83\x83\xE3\x82\xAF\xE3\x82\xB9: ");
+    QString prefix = trLang("Syntax: ", "構文: ");
     if (!hasHighlighting && !extension.isEmpty()) {
-        name += trLang(" (no highlighting)", " (\xE3\x83\x8F\xE3\x82\xA4\xE3\x83\xA9\xE3\x82\xA4\xE3\x83\x88\xE3\x81\xAA\xE3\x81\x97)");
+          name += trLang(" (no highlighting)", " (ハイライトなし)");
     }
     syntaxLabel->setText(prefix + name);
 }
