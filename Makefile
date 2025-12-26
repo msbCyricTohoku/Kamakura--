@@ -196,7 +196,6 @@ DIST          = /usr/lib/qt/mkspecs/features/spec_pre.prf \
 		/usr/lib/qt/mkspecs/features/qt_config.prf \
 		/usr/lib/qt/mkspecs/linux-g++/qmake.conf \
 		/usr/lib/qt/mkspecs/features/spec_post.prf \
-		.qmake.stash \
 		/usr/lib/qt/mkspecs/features/exclusive_builds.prf \
 		/usr/lib/qt/mkspecs/features/toolchain.prf \
 		/usr/lib/qt/mkspecs/features/default_pre.prf \
@@ -360,7 +359,6 @@ Makefile: Kamakura.pro /usr/lib/qt/mkspecs/linux-g++/qmake.conf /usr/lib/qt/mksp
 		/usr/lib/qt/mkspecs/features/qt_config.prf \
 		/usr/lib/qt/mkspecs/linux-g++/qmake.conf \
 		/usr/lib/qt/mkspecs/features/spec_post.prf \
-		.qmake.stash \
 		/usr/lib/qt/mkspecs/features/exclusive_builds.prf \
 		/usr/lib/qt/mkspecs/features/toolchain.prf \
 		/usr/lib/qt/mkspecs/features/default_pre.prf \
@@ -502,7 +500,6 @@ Makefile: Kamakura.pro /usr/lib/qt/mkspecs/linux-g++/qmake.conf /usr/lib/qt/mksp
 /usr/lib/qt/mkspecs/features/qt_config.prf:
 /usr/lib/qt/mkspecs/linux-g++/qmake.conf:
 /usr/lib/qt/mkspecs/features/spec_post.prf:
-.qmake.stash:
 /usr/lib/qt/mkspecs/features/exclusive_builds.prf:
 /usr/lib/qt/mkspecs/features/toolchain.prf:
 /usr/lib/qt/mkspecs/features/default_pre.prf:
@@ -615,7 +612,7 @@ compiler_moc_header_clean:
 moc_airequester.cpp: src/airequester.h \
 		moc_predefs.h \
 		/usr/bin/moc
-	/usr/bin/moc $(DEFINES) --include /home/ben/Kamakura--/moc_predefs.h -I/usr/lib/qt/mkspecs/linux-g++ -I/home/ben/Kamakura-- -I/home/ben/Kamakura--/src -I/usr/include/qt -I/usr/include/qt/QtPrintSupport -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtGui -I/usr/include/qt/QtXml -I/usr/include/qt/QtNetwork -I/usr/include/qt/QtCore -I/usr/include/c++/15.1.1 -I/usr/include/c++/15.1.1/x86_64-pc-linux-gnu -I/usr/include/c++/15.1.1/backward -I/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/include -I/usr/local/include -I/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/include-fixed -I/usr/include src/airequester.h -o moc_airequester.cpp
+	/usr/bin/moc $(DEFINES) --include /home/ben/Kamakura--/moc_predefs.h -I/usr/lib/qt/mkspecs/linux-g++ -I/home/ben/Kamakura-- -I/home/ben/Kamakura--/src -I/usr/include/qt -I/usr/include/qt/QtPrintSupport -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtGui -I/usr/include/qt/QtXml -I/usr/include/qt/QtNetwork -I/usr/include/qt/QtCore -I/usr/include/c++/15.2.1 -I/usr/include/c++/15.2.1/x86_64-pc-linux-gnu -I/usr/include/c++/15.2.1/backward -I/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include -I/usr/local/include -I/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include-fixed -I/usr/include src/airequester.h -o moc_airequester.cpp
 
 moc_codeeditor.cpp: src/codeeditor.h \
 		src/finddialog.h \
@@ -623,29 +620,29 @@ moc_codeeditor.cpp: src/codeeditor.h \
 		src/airequester.h \
 		moc_predefs.h \
 		/usr/bin/moc
-	/usr/bin/moc $(DEFINES) --include /home/ben/Kamakura--/moc_predefs.h -I/usr/lib/qt/mkspecs/linux-g++ -I/home/ben/Kamakura-- -I/home/ben/Kamakura--/src -I/usr/include/qt -I/usr/include/qt/QtPrintSupport -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtGui -I/usr/include/qt/QtXml -I/usr/include/qt/QtNetwork -I/usr/include/qt/QtCore -I/usr/include/c++/15.1.1 -I/usr/include/c++/15.1.1/x86_64-pc-linux-gnu -I/usr/include/c++/15.1.1/backward -I/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/include -I/usr/local/include -I/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/include-fixed -I/usr/include src/codeeditor.h -o moc_codeeditor.cpp
+	/usr/bin/moc $(DEFINES) --include /home/ben/Kamakura--/moc_predefs.h -I/usr/lib/qt/mkspecs/linux-g++ -I/home/ben/Kamakura-- -I/home/ben/Kamakura--/src -I/usr/include/qt -I/usr/include/qt/QtPrintSupport -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtGui -I/usr/include/qt/QtXml -I/usr/include/qt/QtNetwork -I/usr/include/qt/QtCore -I/usr/include/c++/15.2.1 -I/usr/include/c++/15.2.1/x86_64-pc-linux-gnu -I/usr/include/c++/15.2.1/backward -I/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include -I/usr/local/include -I/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include-fixed -I/usr/include src/codeeditor.h -o moc_codeeditor.cpp
 
 moc_finddialog.cpp: src/finddialog.h \
 		moc_predefs.h \
 		/usr/bin/moc
-	/usr/bin/moc $(DEFINES) --include /home/ben/Kamakura--/moc_predefs.h -I/usr/lib/qt/mkspecs/linux-g++ -I/home/ben/Kamakura-- -I/home/ben/Kamakura--/src -I/usr/include/qt -I/usr/include/qt/QtPrintSupport -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtGui -I/usr/include/qt/QtXml -I/usr/include/qt/QtNetwork -I/usr/include/qt/QtCore -I/usr/include/c++/15.1.1 -I/usr/include/c++/15.1.1/x86_64-pc-linux-gnu -I/usr/include/c++/15.1.1/backward -I/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/include -I/usr/local/include -I/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/include-fixed -I/usr/include src/finddialog.h -o moc_finddialog.cpp
+	/usr/bin/moc $(DEFINES) --include /home/ben/Kamakura--/moc_predefs.h -I/usr/lib/qt/mkspecs/linux-g++ -I/home/ben/Kamakura-- -I/home/ben/Kamakura--/src -I/usr/include/qt -I/usr/include/qt/QtPrintSupport -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtGui -I/usr/include/qt/QtXml -I/usr/include/qt/QtNetwork -I/usr/include/qt/QtCore -I/usr/include/c++/15.2.1 -I/usr/include/c++/15.2.1/x86_64-pc-linux-gnu -I/usr/include/c++/15.2.1/backward -I/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include -I/usr/local/include -I/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include-fixed -I/usr/include src/finddialog.h -o moc_finddialog.cpp
 
 moc_highlighter.cpp: src/highlighter.h \
 		moc_predefs.h \
 		/usr/bin/moc
-	/usr/bin/moc $(DEFINES) --include /home/ben/Kamakura--/moc_predefs.h -I/usr/lib/qt/mkspecs/linux-g++ -I/home/ben/Kamakura-- -I/home/ben/Kamakura--/src -I/usr/include/qt -I/usr/include/qt/QtPrintSupport -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtGui -I/usr/include/qt/QtXml -I/usr/include/qt/QtNetwork -I/usr/include/qt/QtCore -I/usr/include/c++/15.1.1 -I/usr/include/c++/15.1.1/x86_64-pc-linux-gnu -I/usr/include/c++/15.1.1/backward -I/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/include -I/usr/local/include -I/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/include-fixed -I/usr/include src/highlighter.h -o moc_highlighter.cpp
+	/usr/bin/moc $(DEFINES) --include /home/ben/Kamakura--/moc_predefs.h -I/usr/lib/qt/mkspecs/linux-g++ -I/home/ben/Kamakura-- -I/home/ben/Kamakura--/src -I/usr/include/qt -I/usr/include/qt/QtPrintSupport -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtGui -I/usr/include/qt/QtXml -I/usr/include/qt/QtNetwork -I/usr/include/qt/QtCore -I/usr/include/c++/15.2.1 -I/usr/include/c++/15.2.1/x86_64-pc-linux-gnu -I/usr/include/c++/15.2.1/backward -I/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include -I/usr/local/include -I/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include-fixed -I/usr/include src/highlighter.h -o moc_highlighter.cpp
 
 moc_kamakura.cpp: src/kamakura.h \
 		src/language.h \
 		moc_predefs.h \
 		/usr/bin/moc
-	/usr/bin/moc $(DEFINES) --include /home/ben/Kamakura--/moc_predefs.h -I/usr/lib/qt/mkspecs/linux-g++ -I/home/ben/Kamakura-- -I/home/ben/Kamakura--/src -I/usr/include/qt -I/usr/include/qt/QtPrintSupport -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtGui -I/usr/include/qt/QtXml -I/usr/include/qt/QtNetwork -I/usr/include/qt/QtCore -I/usr/include/c++/15.1.1 -I/usr/include/c++/15.1.1/x86_64-pc-linux-gnu -I/usr/include/c++/15.1.1/backward -I/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/include -I/usr/local/include -I/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/include-fixed -I/usr/include src/kamakura.h -o moc_kamakura.cpp
+	/usr/bin/moc $(DEFINES) --include /home/ben/Kamakura--/moc_predefs.h -I/usr/lib/qt/mkspecs/linux-g++ -I/home/ben/Kamakura-- -I/home/ben/Kamakura--/src -I/usr/include/qt -I/usr/include/qt/QtPrintSupport -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtGui -I/usr/include/qt/QtXml -I/usr/include/qt/QtNetwork -I/usr/include/qt/QtCore -I/usr/include/c++/15.2.1 -I/usr/include/c++/15.2.1/x86_64-pc-linux-gnu -I/usr/include/c++/15.2.1/backward -I/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include -I/usr/local/include -I/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include-fixed -I/usr/include src/kamakura.h -o moc_kamakura.cpp
 
 moc_metrics.cpp: src/metrics.h \
 		src/language.h \
 		moc_predefs.h \
 		/usr/bin/moc
-	/usr/bin/moc $(DEFINES) --include /home/ben/Kamakura--/moc_predefs.h -I/usr/lib/qt/mkspecs/linux-g++ -I/home/ben/Kamakura-- -I/home/ben/Kamakura--/src -I/usr/include/qt -I/usr/include/qt/QtPrintSupport -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtGui -I/usr/include/qt/QtXml -I/usr/include/qt/QtNetwork -I/usr/include/qt/QtCore -I/usr/include/c++/15.1.1 -I/usr/include/c++/15.1.1/x86_64-pc-linux-gnu -I/usr/include/c++/15.1.1/backward -I/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/include -I/usr/local/include -I/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/include-fixed -I/usr/include src/metrics.h -o moc_metrics.cpp
+	/usr/bin/moc $(DEFINES) --include /home/ben/Kamakura--/moc_predefs.h -I/usr/lib/qt/mkspecs/linux-g++ -I/home/ben/Kamakura-- -I/home/ben/Kamakura--/src -I/usr/include/qt -I/usr/include/qt/QtPrintSupport -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtGui -I/usr/include/qt/QtXml -I/usr/include/qt/QtNetwork -I/usr/include/qt/QtCore -I/usr/include/c++/15.2.1 -I/usr/include/c++/15.2.1/x86_64-pc-linux-gnu -I/usr/include/c++/15.2.1/backward -I/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include -I/usr/local/include -I/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include-fixed -I/usr/include src/metrics.h -o moc_metrics.cpp
 
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
@@ -656,7 +653,7 @@ compiler_uic_clean:
 	-$(DEL_FILE) ui_kamakura.h
 ui_kamakura.h: src/kamakura.ui \
 		/usr/bin/uic \
-		codeeditor.h \
+		src/codeeditor.h \
 		src/finddialog.h \
 		src/documentmetrics.h \
 		src/airequester.h
@@ -695,11 +692,10 @@ main.o: src/main.cpp src/kamakura.h \
 kamakura.o: src/kamakura.cpp src/kamakura.h \
 		src/language.h \
 		ui_kamakura.h \
-		codeeditor.h \
+		src/codeeditor.h \
 		src/finddialog.h \
 		src/documentmetrics.h \
 		src/airequester.h \
-		src/codeeditor.h \
 		src/highlighter.h \
 		src/metrics.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o kamakura.o src/kamakura.cpp
