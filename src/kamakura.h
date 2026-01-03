@@ -5,6 +5,7 @@
 #include <QList>
 #include <QStringList>
 #include <QMenu>
+#include <QWheelEvent>
 #include "language.h"
 
 // Forward Declarations
@@ -60,6 +61,7 @@ private slots:
     void on_actionPaste_triggered();
     void on_actionZoom_triggered();
     void on_actionZoom_2_triggered();
+    void wheelEvent(QWheelEvent *event);
     void on_actionSearch_and_Replace_triggered();
     void on_actionGoToLine_triggered();
     void on_actionDuplicate_Line_triggered();

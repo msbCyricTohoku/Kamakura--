@@ -23,6 +23,7 @@
 #include <QStringList>
 #include <QLabel>
 
+
 //Kamakura-- Mehrdad S. Beni and Hiroshi Watabe, Japan 2023
 
 kamakura::kamakura(QWidget *parent)
@@ -517,6 +518,18 @@ void kamakura::on_actionCopy_triggered() { if (currentEditor()) currentEditor()-
 void kamakura::on_actionPaste_triggered() { if (currentEditor()) currentEditor()->paste(); }
 void kamakura::on_actionZoom_triggered() { if (currentEditor()) currentEditor()->zoomIn(2); }
 void kamakura::on_actionZoom_2_triggered() { if (currentEditor()) currentEditor()->zoomOut(2); }
+
+void kamakura::wheelEvent(QWheelEvent *event)
+{
+    if (event->modifiers() & Qt::ControlModifier) {
+        if (event->angleDelta().y() > 0)
+            currentEditor()->zoomIn(1);
+        else
+            currentEditor()->zoomOut(1);
+        event->accept();
+    }
+}
+
 
 void kamakura::on_actionQuit_triggered() { QApplication::quit(); }
 
