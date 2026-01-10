@@ -7,9 +7,9 @@
 
 ---
 
-🎉 **Kamakura––** is your no-fuss code editor for PHITS scripting and programming.
+**Kamakura––** is your no-fuss code editor for PHITS scripting and programming.
 
-## 🚀 Quick Start
+## Start
 
 1. **Clone or download** the repo.
 2. Make sure you have Qt development tools installed:
@@ -28,13 +28,13 @@
 
 ---
 
-## 🎬 Video Clip
+## Video Clip
 
 ![Kamakura Animation](kamakurav4.gif)
 
 ---
 
-## ✨ Features
+## Features
 
 * **Tabbed Editing**
   Juggle multiple files in one window: PHITS `.i`/`.inp`, Python, C/C++, Rust, Haskell, Fortran90, HTML, CSS, and more.
@@ -91,7 +91,7 @@
   Trim white-spaces in the code or text.
 ---
 
-## 📦 Installation
+## Installation
 
 1. **Dependencies** (examples for Debian/Ubuntu):
 
@@ -115,7 +115,7 @@
 
 ---
 
-## 🎯 Why Kamakura––?
+## Why Kamakura––?
 
 * **Minimalist by Design**
   No extra fluff—just the tools you need to edit PHITS input and more.
@@ -128,7 +128,7 @@
 
 ---
 
-## 🛠️ Contributing
+## Contributing
 
 1. Fork the repo.
 2. Create a feature branch:
@@ -147,11 +147,11 @@ We love bug reports, feature requests, and pull requests—let’s make Kamakura
 
 ---
 
-## 📜 License
+## License
 
 Kamakura–– is released under the [GPLv3 License](LICENSE).
 Feel free to clone, fork, and customize to your heart’s content!
 
 ---
 
-##### Developed with 💙 by Mehrdad S. Beni & Hiroshi Watabe, CYRIC, Tohoku University (2023)
+##### Developed by Mehrdad S. Beni & Hiroshi Watabe, CYRIC, Tohoku University (2023)
