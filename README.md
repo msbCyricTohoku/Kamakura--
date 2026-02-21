@@ -1,69 +1,42 @@
-# KAMAKURA--
--------------------------------------------------------------------------------
-VERSION : 1.0.0
+```text
+===============================================================================
+                             K A M A K U R A
+===============================================================================
+  VERSION: 1.0.0               RUNTIME: QT 5.X                  LANG: C++
+  LICENSE: GPL V3              SYS: LINUX | WIN | MAC
+===============================================================================
+```
 
-RUNTIME : QT 5.X
+> **KAMAKURA** is a lightweight code editor designed for PHITS scripting and multilingual programming. Built for speed and necessity.
 
-LANG    : C++
+### 0x01 // QUICK START
+```bash
+$git clone <repository-url>$ cd kamakura
+$ qmake
+$ make
+$ ./Kamakura
+```
 
-LICENSE : GPL V3
+### 0x02 // BUILD DEPENDENCIES
+* **Debian / Ubuntu:**
+    `$ sudo apt install qtbase5-dev qt5-qmake`
+* **Windows / macOS:**
+    Install Qt SDK via the official installer or Homebrew.
 
-OS      : LINUX | WINDOWS | MACOS
--------------------------------------------------------------------------------
+### 0x03 // CAPABILITIES
+* **Languages:** Syntax support for PHITS, Python, C++, Rust, Fortran, etc.
+* **AI Integration:** Built-in LLM support (ChatGPT / Gemini).
+* **Interface:** Tabbed workspace, word wrap, automatic bracket completion.
+* **Editing:** Line manipulation (duplicate, toggle comment, trim).
+* **Aesthetics:** Theme engine (Light, Dark, Solarized).
+* **Utility:** Recent file tracking, English / Japanese localization.
 
-### [ OVERVIEW ]
+### 0x04 // PHILOSOPHY
+`[ MINIMALIST ]` No bloat.
+`[ PERFORMANT ]` Near instant cold boot.
+`[ NATIVE     ]` Cross platform performance on all major systems.
 
-KAMAKURA IS A LIGHTWEIGHT CODE EDITOR DESIGNED FOR PHITS SCRIPTING AND 
-MULTILINGUAL PROGRAMMING. BUILT FOR SPEED AND NECESSITY.
-
-### [ QUICK START ]
-
-1. CLONE THE REPOSITORY
-2. INSTALL QT5 DEVELOPMENT TOOLS
-3. EXECUTE THE FOLLOWING:
-
-   $ qmake
-   $ make
-   $ ./Kamakura
-
-### [ FEATURES ]
-
-+ MULTI-LANGUAGE SYNTAX (PHITS, PYTHON, C++, RUST, FORTRAN, ETC.)
-+ INTEGRATED LLM SUPPORT (CHATGPT / GEMINI)
-+ THEME ENGINE (LIGHT, DARK, SOLARIZED)
-+ TABBED INTERFACE & WORD WRAP
-+ AUTOMATIC BRACKET COMPLETION
-+ LINE MANIPULATION (DUPLICATE, TOGGLE COMMENT, TRIM)
-+ RECENT FILE TRACKING
-+ LOCALIZATION (ENGLISH / JAPANESE)
-
-### [ BUILD DEPENDENCIES ]
-
-DEBIAN / UBUNTU:
-   $ sudo apt update
-   $ sudo apt install qtbase5-dev qt5-qmake
-
-WINDOWS / MACOS:
-   INSTALL QT SDK VIA OFFICIAL INSTALLER OR HOMEBREW.
-
-### [ PHILOSOPHY ]
-
-- MINIMALIST BY DESIGN: NO BLOAT. 
-- PERFORMANCE DRIVEN: NEAR INSTANT COLD BOOT.
-- CROSS-PLATFORM: NATIVE PERFORMANCE ON ALL MAJOR SYSTEMS.
-
-### [ CONTRIBUTING ]
-
-01. FORK REPOSITORY
-02. CREATE FEATURE BRANCH ($ git checkout -b feature/name)
-03. COMMIT CHANGES ($ git commit -m "note")
-04. PUSH AND OPEN PULL REQUEST
-
-### [ LICENSE ]
-
-RELEASED UNDER THE GPLV3 LICENSE. CUSTOMIZE AS NEEDED.
-
--------------------------------------------------------------------------------
-DEVELOPED BY MEHRDAD S. BENI & HIROSHI WATABE
-CYRIC, TOHOKU UNIVERSITY (2023)
--------------------------------------------------------------------------------
+---
+`[ DEVELOPED BY ]` Mehrdad S. Beni & Hiroshi Watabe
+`[ ORIGIN       ]` CYRIC, Tohoku University (2023)
+`[ LICENSE      ]` Released under GPLv3. Customize as needed.
