@@ -2,7 +2,7 @@
 ===============================================================================
                              K A M A K U R A
 ===============================================================================
-  VERSION: 1.0.0               RUNTIME: QT 5.X                  LANG: C++
+  VERSION: 4.1.0               RUNTIME: QT 5.X                  LANG: C++
   LICENSE: GPL V3              SYS: LINUX | WIN | MAC
 ===============================================================================
 ```
@@ -25,6 +25,8 @@ $ ./Kamakura
 ### 03
 * **Languages:** Syntax support for PHITS, Python, C++, Rust, Fortran, etc.
 * **AI Integration:** Built-in LLM support (ChatGPT / Gemini).
+* **Data Science:** Python script run features.
+* **Kamakura NoteBook:** Notebook to include text and image with .kmk custom file format.
 * **Interface:** Tabbed workspace, word wrap, automatic bracket completion.
 * **Editing:** Line manipulation (duplicate, toggle comment, trim).
 * **Aesthetics:** Theme engine (Light, Dark, Solarized).
