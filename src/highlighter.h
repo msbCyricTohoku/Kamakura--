@@ -31,7 +31,7 @@ private:
 
     struct Language {
         QString extensionRegex;
-        // Rules are now separated by type for precedence
+
         QVector<HighlightingRule> keywordRules;
         QVector<HighlightingRule> functionRules;
         QVector<HighlightingRule> singleLineCommentRules;

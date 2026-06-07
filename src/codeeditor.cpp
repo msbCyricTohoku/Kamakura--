@@ -1,5 +1,4 @@
 #include "codeeditor.h"
-
 #include "linenumberarea.h"
 #include <QPainter>
 #include <QTextBlock>
@@ -430,7 +429,7 @@ void CodeEditor::applyLightTheme()
     lineNumberAreaTextColor = QColor("#555555");
     bracketMatchColor = QColor("#ffd966");
     highlightCurrentLine();
-    //lineNumberArea->update();
+
     if (showLineNumbers)
         lineNumberArea->update();
 }
@@ -439,11 +438,11 @@ void CodeEditor::applyDarkTheme()
 {
     setStyleSheet("background-color:#2b2b2b;color:#ffffff;");
     lineHighlightColor = QColor("#333333");
-    lineNumberAreaBgColor = QColor("#444444");
+    lineNumberAreaBgColor = QColor("#232323");
     lineNumberAreaTextColor = QColor("#aaaaaa");
-    bracketMatchColor = QColor("#806000");
+    bracketMatchColor = QColor("#ffb86c");
     highlightCurrentLine();
-    //lineNumberArea->update();
+
     if (showLineNumbers)
         lineNumberArea->update();
 }
@@ -456,7 +455,7 @@ void CodeEditor::applySolarizedLightTheme()
     lineNumberAreaTextColor = QColor("#586e75");
     bracketMatchColor = QColor("#b58900");
     highlightCurrentLine();
-    //lineNumberArea->update();
+
     if (showLineNumbers)
         lineNumberArea->update();
 }
@@ -469,7 +468,33 @@ void CodeEditor::applySolarizedDarkTheme()
     lineNumberAreaTextColor = QColor("#586e75");
     bracketMatchColor = QColor("#b58900");
     highlightCurrentLine();
-    //lineNumberArea->update();
+
+    if (showLineNumbers)
+        lineNumberArea->update();
+}
+
+void CodeEditor::applyMonokaiTheme()
+{
+    setStyleSheet("background-color:#272822;color:#F8F8F2;");
+    lineHighlightColor = QColor("#3E3D32");
+    lineNumberAreaBgColor = QColor("#1E1F1C");
+    lineNumberAreaTextColor = QColor("#75715E");
+    bracketMatchColor = QColor("#E6DB74");
+    highlightCurrentLine();
+
+    if (showLineNumbers)
+        lineNumberArea->update();
+}
+
+void CodeEditor::applyNordTheme()
+{
+    setStyleSheet("background-color:#2E3440;color:#D8DEE9;");
+    lineHighlightColor = QColor("#3B4252");
+    lineNumberAreaBgColor = QColor("#242933");
+    lineNumberAreaTextColor = QColor("#4C566A");
+    bracketMatchColor = QColor("#EBCB8B");
+    highlightCurrentLine();
+
     if (showLineNumbers)
         lineNumberArea->update();
 }
@@ -600,36 +625,31 @@ void CodeEditor::handleAskChatGPT()
         aiRequester->setChatGPTKey(key);
     }
 
-    QString response = aiRequester->askChatGPT(selected);
-    if (!response.isEmpty()) {
-        QTextCursor c = textCursor();
-        c.setPosition(c.selectionEnd());
-        c.insertText("\n" + response + "\n");
-    }
+    aiRequester->askChatGPT(selected);
+
+    //QString response = aiRequester->askChatGPT(selected);
+    //if (!response.isEmpty()) {
+    //    QTextCursor c = textCursor();
+    //    c.setPosition(c.selectionEnd());
+     //   c.insertText("\n" + response + "\n");
+    //}
 }
 
 void CodeEditor::handleAskGemini()
 {
     QString selected = textCursor().selectedText();
-    if (selected.isEmpty())
-        return;
+    if (selected.isEmpty()) return;
 
     if (aiRequester->geminiKey().isEmpty()) {
         bool ok = false;
         QString key = QInputDialog::getText(this, tr("Gemini API Key"),
                                             tr("Enter your Google Gemini API key"), QLineEdit::Normal,
                                             QString(), &ok);
-        if (!ok || key.isEmpty())
-            return;
+        if (!ok || key.isEmpty()) return;
         aiRequester->setGeminiKey(key);
     }
 
-    QString response = aiRequester->askGemini(selected);
-    if (!response.isEmpty()) {
-        QTextCursor c = textCursor();
-        c.setPosition(c.selectionEnd());
-        c.insertText("\n" + response + "\n");
-    }
+    aiRequester->askGemini(selected);
 }
 
 

@@ -29,6 +29,8 @@ public:
     void applyDarkTheme();
     void applySolarizedLightTheme();
     void applySolarizedDarkTheme();
+    void applyMonokaiTheme();
+    void applyNordTheme();
 
 
      void setWordWrap(bool enable);

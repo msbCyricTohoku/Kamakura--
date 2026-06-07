@@ -51,7 +51,7 @@
      <x>0</x>
      <y>0</y>
      <width>748</width>
-     <height>22</height>
+     <height>23</height>
     </rect>
    </property>
    <property name="font">
@@ -435,9 +435,6 @@
    </property>
    <property name="text">
     <string>Insert Date/Time</string>
-   </property>
-   <property name="shortcut">
-    <string>F5</string>
    </property>
   </action>
   <action name="actionTrim_Trailing_Spaces">

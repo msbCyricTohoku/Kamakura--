@@ -36,8 +36,6 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  // Use the resource system so the application icon is bundled in the binary
-  // The path corresponds to the prefix defined in resources.qrc
   w.setWindowIcon(QIcon(":/new/prefix1/resources/icon.ico"));
   w.show();
   return a.exec();

@@ -7,6 +7,9 @@
 #include <QMenu>
 #include <QStringList>
 #include <QWheelEvent>
+#include <QProcess>
+#include <QPlainTextEdit>
+
 
 // Forward Declarations
 QT_BEGIN_NAMESPACE
@@ -27,8 +30,18 @@ class QDragEnterEvent;
 class QDropEvent;
 class QAction;
 class QLabel;
+class NotebookEditor;
 
-enum class Theme { Light, Dark, SolarizedLight, SolarizedDark };
+//enum class Theme { Light, Dark, SolarizedLight, SolarizedDark };
+
+enum class Theme {
+    Light,
+    Dark,
+    SolarizedLight,
+    SolarizedDark,
+    Monokai,
+    Nord
+};
 
 // Kamakura-- Mehrdad S. Beni and Hiroshi Watabe, Japan 2023
 
@@ -45,7 +58,6 @@ protected:
   void dropEvent(QDropEvent *drop_event) override;
 
 private slots:
-  // Slots named to match the .ui file for auto-connection
   void on_actionNew_triggered();
   void on_actionOpen_triggered();
   void on_actionSave_triggered();
@@ -70,12 +82,13 @@ private slots:
   void setDarkTheme();
   void setSolarizedLightTheme();
   void setSolarizedDarkTheme();
+  void setMonokaiTheme();
+  void setNordTheme();
 
   void toggleWordWrap(bool enabled);
   void toggleLineNumbers(bool enabled);
   void setLanguage(Language lang);
 
-  // Internal Logic Slots
   // void openFileByPath(const QString &path);
   void closeTab(int index);
   void updateTabDirtyStatus();
@@ -83,6 +96,13 @@ private slots:
   void syncListSelectionWithTab(int index);
   void syncTabSelectionWithList(QListWidgetItem *item);
   void handleTabMoved(int from, int to);
+
+  void runScript();
+  void createNewNotebook();
+
+  void selectPythonInterpreter();
+  void createVenv();
+  void installPipPackage();
 
 private:
   Ui::kamakura *ui;
@@ -93,9 +113,22 @@ private:
   QLabel *syntaxLabel{nullptr};
   bool hasCurrentHighlighting{false};
 
+
+  QDockWidget* consoleDock;
+  QPlainTextEdit* consoleOutput;
+  QProcess* scriptProcess;
+
   // bool darkThemeEnabled{true};
   // bool darkThemeEnabled{false};
   //     bool wordWrapEnabled{true};
+
+  QMenu* viewMenu = nullptr;
+  QAction* lightThemeAction = nullptr;
+  QAction* darkThemeAction = nullptr;
+  QAction* solarizedLightAction = nullptr;
+  QAction* solarizedDarkAction = nullptr;
+  QAction* monokaiThemeAction = nullptr;   // New
+  QAction* nordThemeAction = nullptr;      // New
 
   Theme currentTheme{Theme::Light};
   bool wordWrapEnabled{true};
@@ -130,5 +163,12 @@ private:
   void updateWindowTitle(const QString &currentFile);
   CodeEditor *currentEditor();
   QString trLang(const QString &en, const QString &ja) const;
+
+  QMenu* dsMenu{nullptr};
+  QAction* runAct{nullptr};
+  QAction* setPyAct{nullptr};
+  QAction* createVenvAct{nullptr};
+  QAction* installPipAct{nullptr};
+  QAction* newNbAct{nullptr};
 };
 #endif // KAMAKURA_H

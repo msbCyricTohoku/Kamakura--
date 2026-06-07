@@ -22,6 +22,7 @@
 #include <QSettings>
 #include <QStringList>
 #include <QLabel>
+#include "notebookeditor.h"
 
 
 //Kamakura-- Mehrdad S. Beni and Hiroshi Watabe, Japan 2023
@@ -30,11 +31,9 @@ kamakura::kamakura(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::kamakura)
 {
-    // This function automatically connects slots like on_actionNew_triggered()
     ui->setupUi(this); 
     setAcceptDrops(true);
 
-    // Load language files from the embedded Qt resources, using the correct prefix.
     highlighter = new Highlighter({":/new/prefix1/resources/phits_commands.xml",
                                    ":/new/prefix1/resources/python_lang.xml",
                                    ":/new/prefix1/resources/cpp_lang.xml",
@@ -72,7 +71,7 @@ kamakura::kamakura(QWidget *parent)
 
      setLanguage(currentLanguage);
 
-    on_actionNew_triggered(); // Start with a new, empty tab
+    on_actionNew_triggered();
     updateWindowTitle("");
     updateSyntaxLabel(QString(), false);
 }
@@ -90,68 +89,71 @@ void kamakura::setupDocks()
     opened_docs_dock->setWidget(opened_docs_widget);
     addDockWidget(Qt::RightDockWidgetArea, opened_docs_dock);
 
-    //QMenu *viewMenu = menuBar()->addMenu(tr("&View"));
-    
-    QMenu *viewMenu = menuBar()->addMenu("&View");
 
-
+    //**************************************************************8
+    viewMenu = menuBar()->addMenu("&View");
     viewMenu->addAction(opened_docs_dock->toggleViewAction());
 
     QActionGroup* themeGroup = new QActionGroup(this);
-    
-    //QAction* lightTheme = viewMenu->addAction(tr("Light Theme"));
-    //QAction* darkTheme = viewMenu->addAction(tr("Dark Theme"));
 
-    QAction* lightTheme = viewMenu->addAction("Light Theme");
-    QAction* darkTheme = viewMenu->addAction("Dark Theme");
-    QAction* solarizedLight = viewMenu->addAction("Solarized Light Theme");
-    QAction* solarizedDark = viewMenu->addAction("Solarized Dark Theme");
+    lightThemeAction = viewMenu->addAction("Light Theme");
+    darkThemeAction = viewMenu->addAction("Dark Theme");
+    solarizedLightAction = viewMenu->addAction("Solarized Light Theme");
+    solarizedDarkAction = viewMenu->addAction("Solarized Dark Theme");
+    monokaiThemeAction = viewMenu->addAction("Monokai Theme");
+    nordThemeAction = viewMenu->addAction("Nord Theme");
 
-    lightTheme->setCheckable(true);
-    darkTheme->setCheckable(true);
-    solarizedLight->setCheckable(true);
-    solarizedDark->setCheckable(true);
+    lightThemeAction->setCheckable(true);
+    darkThemeAction->setCheckable(true);
+    solarizedLightAction->setCheckable(true);
+    solarizedDarkAction->setCheckable(true);
+    monokaiThemeAction->setCheckable(true);
+    nordThemeAction->setCheckable(true);
 
-
-    themeGroup->addAction(lightTheme);
-    themeGroup->addAction(darkTheme);
-    //darkTheme->setChecked(true);
-    //lightTheme->setChecked(true);
-
-    themeGroup->addAction(solarizedLight);
-    themeGroup->addAction(solarizedDark);
+    themeGroup->addAction(lightThemeAction);
+    themeGroup->addAction(darkThemeAction);
+    themeGroup->addAction(solarizedLightAction);
+    themeGroup->addAction(solarizedDarkAction);
+    themeGroup->addAction(monokaiThemeAction);
+    themeGroup->addAction(nordThemeAction);
 
     switch (currentTheme) {
     case Theme::Dark:
-        darkTheme->setChecked(true);
+        darkThemeAction->setChecked(true);
         break;
     case Theme::SolarizedLight:
-        solarizedLight->setChecked(true);
+        solarizedLightAction->setChecked(true);
         break;
     case Theme::SolarizedDark:
-        solarizedDark->setChecked(true);
+        solarizedDarkAction->setChecked(true);
+        break;
+    case Theme::Monokai:
+        monokaiThemeAction->setChecked(true);
+        break;
+    case Theme::Nord:
+        nordThemeAction->setChecked(true);
         break;
     default:
-        lightTheme->setChecked(true);
+        lightThemeAction->setChecked(true);
         break;
     }
 
-    //wordWrapAction = viewMenu->addAction(tr("Word Wrap"));
-
     wordWrapAction = viewMenu->addAction("Word Wrap");
-
     lineNumbersAction = viewMenu->addAction("Show Line Numbers");
 
     wordWrapAction->setCheckable(true);
     wordWrapAction->setChecked(wordWrapEnabled);
-
     lineNumbersAction->setCheckable(true);
     lineNumbersAction->setChecked(lineNumbersEnabled);
 
-    connect(lightTheme, &QAction::triggered, this, &kamakura::setLightTheme);
-    connect(darkTheme, &QAction::triggered, this, &kamakura::setDarkTheme);
-    connect(solarizedLight, &QAction::triggered, this, &kamakura::setSolarizedLightTheme);
-    connect(solarizedDark, &QAction::triggered, this, &kamakura::setSolarizedDarkTheme);
+    connect(lightThemeAction, &QAction::triggered, this, &kamakura::setLightTheme);
+    connect(darkThemeAction, &QAction::triggered, this, &kamakura::setDarkTheme);
+    connect(solarizedLightAction, &QAction::triggered, this, &kamakura::setSolarizedLightTheme);
+    connect(solarizedDarkAction, &QAction::triggered, this, &kamakura::setSolarizedDarkTheme);
+    connect(monokaiThemeAction, &QAction::triggered, this, &kamakura::setMonokaiTheme);
+    connect(nordThemeAction, &QAction::triggered, this, &kamakura::setNordTheme);
+    //*************************************************************
+
 
 
 
@@ -168,7 +170,71 @@ void kamakura::setupDocks()
     connect(englishAction, &QAction::triggered, [this](){ setLanguage(Language::English); });
     connect(japaneseAction, &QAction::triggered, [this](){ setLanguage(Language::Japanese); });
 
+
+    consoleDock = new QDockWidget(trLang("Data Science Output", "データサイエンス出力"), this);
+    consoleOutput = new QPlainTextEdit(consoleDock);
+    consoleOutput->setReadOnly(true);
+    consoleOutput->setStyleSheet("background-color: #1e1e1e; color: #d4d4d4; font-family: Courier;");
+    consoleDock->setWidget(consoleOutput);
+    addDockWidget(Qt::BottomDockWidgetArea, consoleDock);
+    consoleDock->hide();
+
+    scriptProcess = new QProcess(this);
+    connect(scriptProcess, &QProcess::readyReadStandardOutput, this, [this]() {
+        consoleOutput->moveCursor(QTextCursor::End);
+        consoleOutput->insertPlainText(scriptProcess->readAllStandardOutput());
+    });
+    connect(scriptProcess, &QProcess::readyReadStandardError, this, [this]() {
+        consoleOutput->moveCursor(QTextCursor::End);
+        consoleOutput->insertPlainText(scriptProcess->readAllStandardError());
+    });
+
+    /* the new addition for notebook and runscripts */
+
+    /*
+    QMenu* dsMenu = menuBar()->addMenu(trLang("Data Science", "データサイエンス"));
+
+    QAction* runAct = dsMenu->addAction(trLang("Run Script (Python)", "スクリプト実行"));
+    runAct->setShortcut(QKeySequence("F5"));
+    connect(runAct, &QAction::triggered, this, &kamakura::runScript);
+
+    dsMenu->addSeparator();
+    QAction* setPyAct = dsMenu->addAction(trLang("Select Global Python Interpreter...", "Pythonインタープリターを選択..."));
+    connect(setPyAct, &QAction::triggered, this, &kamakura::selectPythonInterpreter);
+
+    QAction* createVenvAct = dsMenu->addAction(trLang("Create Virtual Environment (.venv) here", "仮想環境(.venv)を作成"));
+    connect(createVenvAct, &QAction::triggered, this, &kamakura::createVenv);
+
+    QAction* newNbAct = ui->menuFile->addAction(trLang("New Notebook (.kmk)", "新規ノートブック (.kmk)"));
+    connect(newNbAct, &QAction::triggered, this, &kamakura::createNewNotebook);
+
+    QAction* installPipAct = dsMenu->addAction(trLang("Install Pip Packages...", "Pipパッケージをインストール..."));
+    connect(installPipAct, &QAction::triggered, this, &kamakura::installPipPackage);
+    */
+
+
+
+    dsMenu = menuBar()->addMenu(trLang("Data Science", "データサイエンス"));
+
+    runAct = dsMenu->addAction(trLang("Run Script (Python)", "スクリプトを実行 (Python)"));
+    runAct->setShortcut(QKeySequence("F5"));
+    connect(runAct, &QAction::triggered, this, &kamakura::runScript);
+
+    dsMenu->addSeparator();
+    setPyAct = dsMenu->addAction(trLang("Select Global Python Interpreter...", "グローバル Python インタープリターを選択..."));
+    connect(setPyAct, &QAction::triggered, this, &kamakura::selectPythonInterpreter);
+
+    createVenvAct = dsMenu->addAction(trLang("Create Virtual Environment (.venv) here", "ここに仮想環境 (.venv) を作成"));
+    connect(createVenvAct, &QAction::triggered, this, &kamakura::createVenv);
+
+    newNbAct = ui->menuFile->addAction(trLang("New Notebook (.kmk)", "新規ノートブック (.kmk)"));
+    connect(newNbAct, &QAction::triggered, this, &kamakura::createNewNotebook);
+
+    installPipAct = dsMenu->addAction(trLang("Install Pip Packages...", "Pip パッケージをインストール..."));
+    connect(installPipAct, &QAction::triggered, this, &kamakura::installPipPackage);
 }
+
+
 
 void kamakura::setupConnections()
 {
@@ -223,7 +289,6 @@ CodeEditor* kamakura::currentEditor()
     return qobject_cast<CodeEditor*>(tabs->currentWidget());
 }
 
-// --- Slot Implementations ---
 
 void kamakura::on_actionNew_triggered()
 {
@@ -237,7 +302,6 @@ void kamakura::on_actionNew_triggered()
     opened_docs_widget->addItem("Untitled");
     syncListSelectionWithTab(index);
 
-    // Ensure highlighter is set even if the currentChanged signal isn't emitted
     onCurrentTabChanged(index);
 
     
@@ -257,6 +321,7 @@ void kamakura::on_actionOpen_triggered()
 
 void kamakura::openFileByPath(const QString& path)
 {
+    //prevent opening the same file twice
     for (int i = 0; i < tabs->count(); ++i) {
         if (tabs->tabToolTip(i) == path) {
             tabs->setCurrentIndex(i);
@@ -264,39 +329,60 @@ void kamakura::openFileByPath(const QString& path)
         }
     }
 
-    QFile file(path);
-    if (!file.open(QFile::ReadOnly | QFile::Text)) {
-        //QMessageBox::warning(this, "Error", "Could not open file: " + file.errorString());
-        QMessageBox::warning(this,
-                             trLang("Error", "エラー"),
-                             trLang("Could not open file: ", "ファイルを開けません: ") + file.errorString());
-        return;
-    }
-    
-    QString contents = file.readAll();
-    file.close();
-    
-    CodeEditor* editor = currentEditor();
-    if (tabs->count() == 1 && tabs->tabText(0) == "Untitled" && !editor->document()->isModified())
-    {
-       tabs->removeTab(0);
-       opened_docs_widget->takeItem(0);
+    QString ext = QFileInfo(path).suffix().toLower();
+    QWidget* newEditor = nullptr;
+
+
+        if (ext == "kmk") {
+            NotebookEditor* notebook = new NotebookEditor(this);
+            if (!notebook->loadKmkDoc(path)) {
+                QMessageBox::warning(this, trLang("Error", "エラー"), trLang("Could not load notebook.", "ノートブックを読み込めませんでした。"));
+                delete notebook; return;
+            }
+            connect(notebook->document(), &QTextDocument::modificationChanged, this, &kamakura::updateTabDirtyStatus);
+            newEditor = notebook;
+        }
+    else {
+        QFile file(path);
+        if (!file.open(QFile::ReadOnly | QFile::Text)) {
+            QMessageBox::warning(this, trLang("Error", "エラー"), trLang("Could not open file: ", "ファイルを開けません: ") + file.errorString());
+            return;
+        }
+        QString contents = file.readAll();
+        file.close();
+
+        CodeEditor* editor = new CodeEditor(this);
+        setupEditor(editor);
+        editor->setPlainText(contents);
+        newEditor = editor;
     }
 
-    editor = new CodeEditor;
-    setupEditor(editor);
-    editor->setPlainText(contents);
+    // if only open tab is an empty "untitled" tab, close it
+    QWidget* currentWidget = tabs->currentWidget();
+    if (tabs->count() == 1 && tabs->tabText(0) == "Untitled") {
+        if (CodeEditor* ce = qobject_cast<CodeEditor*>(currentWidget)) {
+            if (!ce->document()->isModified()) {
+                tabs->removeTab(0);
+                delete opened_docs_widget->takeItem(0);
+                ce->deleteLater();
+            }
+        }
+    }
 
     QFileInfo fileInfo(path);
-    int index = tabs->addTab(editor, fileInfo.fileName());
-    tabs->setTabToolTip(index, path); 
+
+    int index = tabs->addTab(newEditor, fileInfo.fileName());
+
+    tabs->setTabToolTip(index, path);
     tabs->setCurrentIndex(index);
 
     opened_docs_widget->addItem(fileInfo.fileName());
+
     syncListSelectionWithTab(index);
 
-    // Explicitly update highlighter in case currentChanged is not emitted
-    onCurrentTabChanged(index);
+    if (ext != "kmk") {
+        onCurrentTabChanged(index);
+    }
 
     addRecentFile(path);
 }
@@ -327,56 +413,98 @@ void kamakura::on_actionSave_triggered()
 
 void kamakura::on_actionSave_2_triggered()
 {
-    CodeEditor* editor = currentEditor();
-    if (!editor) return;
+    QWidget* currentWidget = tabs->currentWidget();
+    if (!currentWidget) return;
 
     QString filePath = tabs->tabToolTip(tabs->currentIndex());
+
+    //if the file is "Untitled" (no path), redirect to "Save As"
     if (filePath.isEmpty()) {
         on_actionSave_triggered();
         return;
     }
 
-    QFile file(filePath);
-    if (!file.open(QFile::WriteOnly | QFile::Text)) {
-        //QMessageBox::warning(this, "Error", "Could not save file: " + file.errorString());
-        QMessageBox::warning(this,
-                             trLang("Error", "エラー"),
-                             trLang("Could not save file: ", "ファイルを保存できません: ") + file.errorString());
+    //saving a notebook (.kmk)
+    if (auto ne = qobject_cast<NotebookEditor*>(currentWidget)) {
+        if (!filePath.endsWith(".kmk", Qt::CaseInsensitive)) {
+            filePath = QFileDialog::getSaveFileName(this, "Save Notebook", QDir::homePath(), "Kamakura Doc (*.kmk)");
+            if (filePath.isEmpty()) return;
 
+            if (!filePath.endsWith(".kmk", Qt::CaseInsensitive)) {
+                filePath += ".kmk";
+            }
 
+            tabs->setTabToolTip(tabs->currentIndex(), filePath);
+            tabs->setTabText(tabs->currentIndex(), QFileInfo(filePath).fileName());
+
+            if (opened_docs_widget->item(tabs->currentIndex())) {
+                opened_docs_widget->item(tabs->currentIndex())->setText(QFileInfo(filePath).fileName());
+            }
+        }
+        ne->saveKmkDoc(filePath);
+        ui->statusbar->showMessage(trLang("Notebook saved", "保存しました"), 2000);
         return;
     }
 
-    file.write(editor->toPlainText().toUtf8());
-    file.close();
-    editor->document()->setModified(false);
-    //ui->statusbar->showMessage("File saved", 2000);
-    ui->statusbar->showMessage(trLang("File saved", "保存しました"), 2000);
+    //saving a standard code script (.py, .cpp, .txt, etc.)
+    else if (auto ce = qobject_cast<CodeEditor*>(currentWidget)) {
+        QFile file(filePath);
+        if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+
+            file.write(ce->toPlainText().toUtf8());
+            file.close();
+
+            ce->document()->setModified(false);
+
+            QString fileName = QFileInfo(filePath).fileName();
+            tabs->setTabText(tabs->currentIndex(), fileName);
+            if (opened_docs_widget->item(tabs->currentIndex())) {
+                opened_docs_widget->item(tabs->currentIndex())->setText(fileName);
+            }
+
+            ui->statusbar->showMessage(trLang("File saved", "保存しました"), 2000);
+        } else {
+            QMessageBox::warning(this, trLang("Error", "エラー"),
+                                 trLang("Could not save file: ", "保存できませんでした: ") + file.errorString());
+        }
+    }
 }
+
 
 
 void kamakura::closeTab(int index)
 {
-    CodeEditor* editor = qobject_cast<CodeEditor*>(tabs->widget(index));
-    if (editor && editor->document()->isModified()) {
-        QMessageBox::StandardButton reply;
-        //reply = QMessageBox::question(this, "Unsaved Changes",
-        //    "'" + tabs->tabText(index) + "' has been modified. Save changes?",
+    QWidget* widgetToClose = tabs->widget(index);
+    if (!widgetToClose) return;
 
-        reply = QMessageBox::question(this,
-            trLang("Unsaved Changes", "保存されていない変更"),
-            trLang("'" + tabs->tabText(index) + "' has been modified. Save changes?",
-                  "'" + tabs->tabText(index) + "' は編集されています。保存しますか？"),
-            QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+    bool isModified = false;
+
+    //check for unsaved changes
+    if (CodeEditor* editor = qobject_cast<CodeEditor*>(widgetToClose)) {
+        isModified = editor->document()->isModified();
+    } else if (NotebookEditor* notebook = qobject_cast<NotebookEditor*>(widgetToClose)) {
+        isModified = notebook->document()->isModified();
+    }
+
+    if (isModified) {
+        QMessageBox::StandardButton reply = QMessageBox::question(this,
+                                                                  trLang("Unsaved Changes", "保存されていない変更"),
+                                                                  trLang("'" + tabs->tabText(index) + "' has been modified. Save changes?",
+                                                                         "'" + tabs->tabText(index) + "' は編集されています。保存しますか？"),
+                                                                  QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
 
         if (reply == QMessageBox::Save) {
+            tabs->setCurrentIndex(index);
             on_actionSave_triggered();
         } else if (reply == QMessageBox::Cancel) {
             return;
         }
     }
+
     tabs->removeTab(index);
     delete opened_docs_widget->takeItem(index);
+
+    widgetToClose->deleteLater();
 
     if (tabs->count() == 0) {
         on_actionNew_triggered();
@@ -390,6 +518,7 @@ void kamakura::dragEnterEvent(QDragEnterEvent* drag_event)
         drag_event->acceptProposedAction();
 }
 
+/*
 void kamakura::dropEvent(QDropEvent* drop_event)
 {
     foreach (const QUrl &url, drop_event->mimeData()->urls()) {
@@ -399,7 +528,24 @@ void kamakura::dropEvent(QDropEvent* drop_event)
         }
     }
 }
+*/
 
+void kamakura::dropEvent(QDropEvent* drop_event)
+{
+    foreach (const QUrl &url, drop_event->mimeData()->urls()) {
+        QString filePath = url.toLocalFile();
+        if (!filePath.isEmpty()) {
+            QString ext = QFileInfo(filePath).suffix().toLower();
+
+            //if image and if notebook open then allow drop event
+            if ((ext == "png" || ext == "jpg" || ext == "jpeg" || ext == "gif") &&
+                qobject_cast<NotebookEditor*>(tabs->currentWidget())) {
+                continue;
+            }
+            openFileByPath(filePath);
+        }
+    }
+}
 
 void kamakura::onCurrentTabChanged(int index)
 {
@@ -513,12 +659,178 @@ void kamakura::handleTabMoved(int from, int to)
     syncListSelectionWithTab(to);
 }
 
+void kamakura::runScript()
+{
+    CodeEditor* editor = currentEditor();
+    if (!editor) {
+        QMessageBox::information(this, "Info", "Please open a code script (.py) to run.");
+        return;
+    }
+
+    QString filePath = tabs->tabToolTip(tabs->currentIndex());
+    if (filePath.isEmpty() || editor->document()->isModified()) {
+        QMessageBox::information(this, "Save Required", "Please save the file before running.");
+        on_actionSave_triggered();
+        filePath = tabs->tabToolTip(tabs->currentIndex());
+        if (filePath.isEmpty()) return;
+    }
+
+    QString dirPath = QFileInfo(filePath).absolutePath();
+    QString ext = QFileInfo(filePath).suffix().toLower();
+    QString cmd;
+
+    //if (ext == "r") {
+    //    cmd = "Rscript";
+    //}
+    if (ext == "py" || ext == "pyw") {
+
+        //reading global python settings
+        QSettings settings("Kamakura", "Kamakura");
+        cmd = settings.value("PythonExec", "python").toString();
+
+        //here we check for local venv
+        QString winVenv1 = QDir(dirPath).filePath(".venv/Scripts/python.exe");
+        QString unixVenv1 = QDir(dirPath).filePath(".venv/bin/python");
+        QString winVenv2 = QDir(dirPath).filePath("venv/Scripts/python.exe");
+        QString unixVenv2 = QDir(dirPath).filePath("venv/bin/python");
+
+        QString detectedVenv = "";
+
+        if (QFile::exists(winVenv1)) detectedVenv = winVenv1;
+        else if (QFile::exists(unixVenv1)) detectedVenv = unixVenv1;
+        else if (QFile::exists(winVenv2)) detectedVenv = winVenv2;
+        else if (QFile::exists(unixVenv2)) detectedVenv = unixVenv2;
+
+        if (!detectedVenv.isEmpty()) {
+            QMessageBox::StandardButton reply = QMessageBox::question(this,
+                                                                      "Virtual Environment Detected",
+                                                                      "A local virtual environment was found in this directory.\n\nDo you want to run the script using this isolated environment instead of the global default?",
+                                                                      QMessageBox::Yes | QMessageBox::No);
+
+            if (reply == QMessageBox::Yes) {
+                cmd = detectedVenv;
+            }
+        }
+    } else {
+        QMessageBox::information(this, "Info", "Unsupported script type. Open a .py file to run.");
+        return;
+    }
+
+    consoleOutput->clear();
+    consoleDock->show();
+    consoleOutput->appendPlainText(QString("--- Running %1 using [%2] ---\n").arg(QFileInfo(filePath).fileName(), cmd));
+
+    scriptProcess->setWorkingDirectory(dirPath);
+    scriptProcess->start(cmd, QStringList() << filePath);
+}
+
+void kamakura::createNewNotebook()
+{
+    NotebookEditor* ne = new NotebookEditor(this);
+    connect(ne->document(), &QTextDocument::modificationChanged, this, &kamakura::updateTabDirtyStatus);
+    int index = tabs->addTab(ne, "Untitled.kmk");
+    tabs->setTabToolTip(index, "");
+    tabs->setCurrentIndex(index);
+    opened_docs_widget->addItem("Untitled.kmk");
+}
+
+void kamakura::selectPythonInterpreter()
+{
+    QSettings settings("Kamakura", "Kamakura");
+    QString current = settings.value("PythonExec", "python").toString();
+
+    QString newPath = QFileDialog::getOpenFileName(this,
+                                                   trLang("Select Python Executable", "Python実行ファイルを選択"),
+                                                   current);
+
+    if (!newPath.isEmpty()) {
+        settings.setValue("PythonExec", newPath);
+        QMessageBox::information(this, "Success", "Global Python interpreter updated to:\n" + newPath);
+    }
+}
+
+//here Kamakura opens .venv when users asks
+void kamakura::createVenv()
+{
+    QString filePath = tabs->tabToolTip(tabs->currentIndex());
+    if (filePath.isEmpty()) {
+        QMessageBox::warning(this, "Error", "Please save your script in a directory first so the environment knows where to install.");
+        return;
+    }
+
+    QString dirPath = QFileInfo(filePath).absolutePath();
+    QSettings settings("Kamakura", "Kamakura");
+    QString pythonExec = settings.value("PythonExec", "python").toString();
+
+    consoleOutput->clear();
+    consoleDock->show();
+    consoleOutput->appendPlainText("--- Creating Virtual Environment (.venv) in: " + dirPath + " ---\n");
+    consoleOutput->appendPlainText("Please wait... This may take up to a minute.\n");
+    QCoreApplication::processEvents();
+
+    scriptProcess->setWorkingDirectory(dirPath);
+    scriptProcess->start(pythonExec, QStringList() << "-m" << "venv" << ".venv");
+}
+
+void kamakura::installPipPackage()
+{
+    QString filePath = tabs->tabToolTip(tabs->currentIndex());
+    if (filePath.isEmpty()) {
+        QMessageBox::warning(this, "Error", "Please save your script in a directory first.");
+        return;
+    }
+
+    QString dirPath = QFileInfo(filePath).absolutePath();
+    QString winVenv = QDir(dirPath).filePath(".venv/Scripts/python.exe");
+    QString unixVenv = QDir(dirPath).filePath(".venv/bin/python");
+
+    QString detectedVenv = "";
+    if (QFile::exists(winVenv)) detectedVenv = winVenv;
+    else if (QFile::exists(unixVenv)) detectedVenv = unixVenv;
+
+    if (detectedVenv.isEmpty()) {
+        QMessageBox::warning(this, "Error", "No .venv found in this directory. Create one first.");
+        return;
+    }
+
+    bool ok;
+    QString packages = QInputDialog::getText(this, "Install Packages",
+                                             "Enter pip package names (e.g., numpy pandas matplotlib):",
+                                             QLineEdit::Normal, "", &ok);
+    if (ok && !packages.isEmpty()) {
+        consoleOutput->clear();
+        consoleDock->show();
+        consoleOutput->appendPlainText("--- Installing packages via pip: " + packages + " ---\n");
+
+        scriptProcess->setWorkingDirectory(dirPath);
+        QStringList args;
+        args << "-m" << "pip" << "install";
+        args.append(packages.split(" ", Qt::SkipEmptyParts));
+
+        scriptProcess->start(detectedVenv, args);
+    }
+}
+
 void kamakura::on_actionCut_triggered() { if (currentEditor()) currentEditor()->cut(); }
 void kamakura::on_actionCopy_triggered() { if (currentEditor()) currentEditor()->copy(); }
 void kamakura::on_actionPaste_triggered() { if (currentEditor()) currentEditor()->paste(); }
-void kamakura::on_actionZoom_triggered() { if (currentEditor()) currentEditor()->zoomIn(2); }
-void kamakura::on_actionZoom_2_triggered() { if (currentEditor()) currentEditor()->zoomOut(2); }
+//void kamakura::on_actionZoom_triggered() { if (currentEditor()) currentEditor()->zoomIn(2); }
+//void kamakura::on_actionZoom_2_triggered() { if (currentEditor()) currentEditor()->zoomOut(2); }
 
+
+void kamakura::on_actionZoom_triggered() {
+    QWidget* currentWidget = tabs->currentWidget();
+    if (auto ce = qobject_cast<CodeEditor*>(currentWidget)) ce->zoomIn(2);
+    else if (auto ne = qobject_cast<NotebookEditor*>(currentWidget)) ne->zoomIn(2);
+}
+
+void kamakura::on_actionZoom_2_triggered() {
+    QWidget* currentWidget = tabs->currentWidget();
+    if (auto ce = qobject_cast<CodeEditor*>(currentWidget)) ce->zoomOut(2);
+    else if (auto ne = qobject_cast<NotebookEditor*>(currentWidget)) ne->zoomOut(2);
+}
+
+/*
 void kamakura::wheelEvent(QWheelEvent *event)
 {
     if (event->modifiers() & Qt::ControlModifier) {
@@ -526,6 +838,25 @@ void kamakura::wheelEvent(QWheelEvent *event)
             currentEditor()->zoomIn(1);
         else
             currentEditor()->zoomOut(1);
+        event->accept();
+    }
+}
+*/
+
+void kamakura::wheelEvent(QWheelEvent *event)
+{
+    if (event->modifiers() & Qt::ControlModifier) {
+        QWidget* currentWidget = tabs->currentWidget();
+        auto ce = qobject_cast<CodeEditor*>(currentWidget);
+        auto ne = qobject_cast<NotebookEditor*>(currentWidget);
+
+        if (event->angleDelta().y() > 0) {
+            if (ce) ce->zoomIn(1);
+            else if (ne) ne->zoomIn(1);
+        } else {
+            if (ce) ce->zoomOut(1);
+            else if (ne) ne->zoomOut(1);
+        }
         event->accept();
     }
 }
@@ -600,7 +931,7 @@ void kamakura::on_actionKamakura_triggered()
 {
     //QMessageBox::about(this, "About Kamakura",
        // "<p><b>Kamakura Code Editor</b></p>"
-        //"<p>Version 2.0</p>"
+        //"<p>Version 4.5</p>"
         //"<p>A lightweight, extensible code editor.</p>"
         //"<p>By Mehrdad S. Beni & Hiroshi Watabe, 2025.</p>");
 QMessageBox::about(
@@ -608,11 +939,11 @@ QMessageBox::about(
     trLang("About Kamakura", "Kamakuraについて"),
     trLang(
         "<p><b>Kamakura Code Editor</b></p>"
-        "<p>Version 4.0</p>"
+        "<p>Version 4.5</p>"
         "<p>A lightweight, extensible code editor.</p>"
         "<p>By Mehrdad S. Beni & Hiroshi Watabe, 2025.</p>",
             "<p><b>Kamakuraコードエディタ</b></p>"
-            "<p>バージョン 4.0</p>"
+            "<p>バージョン 4.5</p>"
             "<p>軽量で拡張性のあるコードエディタです。</p>"
             "<p>Mehrdad S. Beni & Hiroshi Watabe, 2025.</p>"
     )
@@ -748,6 +1079,60 @@ void kamakura::setSolarizedDarkTheme()
     }
 }
 
+void kamakura::setMonokaiTheme()
+{
+    qApp->setStyle("Fusion");
+    QPalette palette;
+    palette.setColor(QPalette::Window, QColor("#272822"));
+    palette.setColor(QPalette::WindowText, QColor("#F8F8F2"));
+    palette.setColor(QPalette::Base, QColor("#1E1F1C"));
+    palette.setColor(QPalette::AlternateBase, QColor("#272822"));
+    palette.setColor(QPalette::ToolTipBase, QColor("#F8F8F2"));
+    palette.setColor(QPalette::ToolTipText, QColor("#272822"));
+    palette.setColor(QPalette::Text, QColor("#F8F8F2"));
+    palette.setColor(QPalette::Button, QColor("#3E3D32"));
+    palette.setColor(QPalette::ButtonText, QColor("#F8F8F2"));
+    palette.setColor(QPalette::BrightText, QColor("#F92672"));
+    palette.setColor(QPalette::Highlight, QColor("#49483E"));
+    palette.setColor(QPalette::HighlightedText, QColor("#A6E22E"));
+
+    currentTheme = Theme::Monokai;
+    qApp->setPalette(palette);
+    for (int i = 0; i < tabs->count(); ++i) {
+        if (auto editor = qobject_cast<CodeEditor*>(tabs->widget(i))) {
+            editor->applyMonokaiTheme();
+        }
+    }
+}
+
+void kamakura::setNordTheme()
+{
+    qApp->setStyle("Fusion");
+    QPalette palette;
+    palette.setColor(QPalette::Window, QColor("#2E3440"));
+    palette.setColor(QPalette::WindowText, QColor("#D8DEE9"));
+    palette.setColor(QPalette::Base, QColor("#242933"));
+    palette.setColor(QPalette::AlternateBase, QColor("#2E3440"));
+    palette.setColor(QPalette::ToolTipBase, QColor("#3B4252"));
+    palette.setColor(QPalette::ToolTipText, QColor("#E5E9F0"));
+    palette.setColor(QPalette::Text, QColor("#D8DEE9"));
+    palette.setColor(QPalette::Button, QColor("#434C5E"));
+    palette.setColor(QPalette::ButtonText, QColor("#E5E9F0"));
+    palette.setColor(QPalette::BrightText, QColor("#BF616A"));
+    palette.setColor(QPalette::Highlight, QColor("#4C566A"));
+    palette.setColor(QPalette::HighlightedText, QColor("#88C0D0"));
+
+    currentTheme = Theme::Nord;
+    qApp->setPalette(palette);
+    for (int i = 0; i < tabs->count(); ++i) {
+
+        if (auto editor = qobject_cast<CodeEditor*>(tabs->widget(i))) {
+
+            editor->applyNordTheme();
+        }
+    }
+}
+
 
 QString kamakura::trLang(const QString& en, const QString& ja) const
 {
@@ -758,8 +1143,23 @@ void kamakura::setLanguage(Language lang)
 {
     currentLanguage = lang;
 
-    // Update dock and actions
     opened_docs_dock->setWindowTitle(trLang("Opened Files", "開いているファイル"));
+
+    if (dsMenu) {
+        dsMenu->setTitle(trLang("Data Science", "データサイエンス"));
+        runAct->setText(trLang("Run Script (Python)", "スクリプトを実行 (Python)"));
+        setPyAct->setText(trLang("Select Global Python Interpreter...", "グローバル Python インタープリターを選択..."));
+        createVenvAct->setText(trLang("Create Virtual Environment (.venv) here", "ここに仮想環境 (.venv) を作成"));
+        installPipAct->setText(trLang("Install Pip Packages...", "Pip パッケージをインストール..."));
+    }
+
+    if (newNbAct) {
+        newNbAct->setText(trLang("New Notebook (.kmk)", "新規ノートブック (.kmk)"));
+    }
+
+    if (consoleDock) {
+        consoleDock->setWindowTitle(trLang("Data Science Output", "データサイエンス出力"));
+    }
 
     ui->menuFile->setTitle(trLang("File", "ファイル"));
     ui->menuEdit->setTitle(trLang("Edit", "編集"));
@@ -789,6 +1189,29 @@ void kamakura::setLanguage(Language lang)
 
     ui->actionTrim_Trailing_Spaces->setText(trLang("Trim Trailing Spaces", "末尾の空白を削除"));
 
+
+    if (viewMenu) {
+        viewMenu->setTitle(trLang("View", "表示"));
+    }
+    if (lightThemeAction) {
+        lightThemeAction->setText(trLang("Light Theme", "ライトテーマ"));
+    }
+    if (darkThemeAction) {
+        darkThemeAction->setText(trLang("Dark Theme", "ダークテーマ"));
+    }
+    if (solarizedLightAction) {
+        solarizedLightAction->setText(trLang("Solarized Light Theme", "ソーラライズド ライト"));
+    }
+    if (solarizedDarkAction) {
+        solarizedDarkAction->setText(trLang("Solarized Dark Theme", "ソーラライズド ダーク"));
+    }
+    if (monokaiThemeAction) {
+        monokaiThemeAction->setText(trLang("Monokai Theme", "Monokai テーマ"));
+    }
+    if (nordThemeAction) {
+        nordThemeAction->setText(trLang("Nord Theme", "Nord テーマ"));
+    }
+
     englishAction->setText(trLang("English", "英語"));
     japaneseAction->setText(trLang("Japanese", "日本語"));
     if(languageMenu)
@@ -805,6 +1228,8 @@ void kamakura::setLanguage(Language lang)
     } else {
         updateSyntaxLabel(QString(), hasCurrentHighlighting);
     }
+
+
 }
 
 
